@@ -1,6 +1,5 @@
-# Configuration for Reddit API
-REDDIT_CLIENT_ID = 'your_client_id'
-REDDIT_SECRET = 'your_client_secret'
-REDDIT_USER_AGENT = 'your_user_agent'
-REDDIT_USERNAME = 'your_username'
-REDDIT_PASSWORD = 'your_password'
+REDDIT_CLIENT_ID ='L5x_OBLY_HG9UxgxfOg69Q'
+REDDIT_SECRET ='3f2igWO4Hdcu404B3KxVV81nE_hnsA'
+REDDIT_USER_AGENT ='python:StockPredictionApp:v1.0 (by /u/Stock_prediction)'
+REDDIT_USERNAME ='Stock_prediction'
+REDDIT_PASSWORD ='curry666666'
