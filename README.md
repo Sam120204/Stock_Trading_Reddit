@@ -2,13 +2,15 @@
 
 ## Overview
 
-This project aims to develop a correlation between stock predictions based on the posts or comments on Reddit and the actual stock trends. The project fetches trending stocks data from the Apewisdom API and retrieves relevant Reddit posts and comments discussing these stocks. This data is used to analyze sentiment and potential market movements.
+This project aims to develop a correlation between stock predictions based on the posts or comments on Reddit and the actual stock trends. The project fetches trending stocks, cryptocurrencies, and 4Chan /biz mentions data from the Apewisdom API and retrieves relevant Reddit posts and comments discussing these assets. This data is used to analyze sentiment and potential market movements.
 
 ## Features
 
 - Fetch trending stocks from Apewisdom API
-- Retrieve and display Reddit posts and comments related to trending stocks
-- Calculate and display the 24-hour change in mentions of each stock
+- Fetch trending cryptocurrencies from Apewisdom API
+- Fetch most mentioned stocks & cryptos on 4Chan /biz from Apewisdom API
+- Retrieve and display Reddit posts and comments related to trending stocks and cryptocurrencies
+- Calculate and display the 24-hour change in mentions of each stock and cryptocurrency
 - Analyze sentiment from Reddit discussions
 
 ## Prerequisites
@@ -21,7 +23,7 @@ This project aims to develop a correlation between stock predictions based on th
 
 1. **Clone the repository**
     ```sh
-    git clone https://github.com/Sam120204/Stock_Trading_Reddit.git
+    git clone https://github.com/yourusername/Stock_Trading_Reddit.git
     cd Stock_Trading_Reddit
     ```
 
@@ -42,25 +44,26 @@ This project aims to develop a correlation between stock predictions based on th
 
 ## Usage
 
-1. **Fetch trending stocks and display data**
+1. **Fetch trending stocks, cryptocurrencies, and 4Chan data and display results**
     ```sh
     python main.py
     ```
 
-2. **Fetch posts and comments related to trending stocks**
-    The `main.py` script fetches and displays trending stocks. It also retrieves and prints relevant Reddit posts and comments discussing these stocks.
+2. **Fetch posts and comments related to trending stocks and cryptocurrencies**
+    The `main.py` script fetches and displays trending stocks, cryptocurrencies, and 4Chan mentions. It also retrieves and prints relevant Reddit posts and comments discussing these assets.
 
 ## Project Structure
 
-- `config.py`: Contains Apewisdom API credentials.
-- `main.py`: Main script to fetch and display trending stocks and Reddit discussions.
+- `config.py`: Contains Reddit API credentials.
+- `main.py`: Main script to fetch and display trending stocks, cryptocurrencies, 4Chan mentions, and Reddit discussions.
 - `reddit_client.py`: Handles Reddit API connection and data retrieval.
-- `apewisdom_client.py`: Fetches trending stocks data from Apewisdom API.
+- `apewisdom_client.py`: Fetches trending stocks, cryptocurrencies, and 4Chan data from Apewisdom API.
 - `README.md`: Project documentation.
 
 ## Example Output
 
 ```plaintext
+Trending Stocks on Reddit in the past 24 hours
 Rank  Ticker   Name                           Mentions  24h Change (%) 
 ======================================================================
 1     BB       BlackBerry                     1420      -8.00           
@@ -73,3 +76,21 @@ Rank  Ticker   Name                           Mentions  24h Change (%)
 8     QQQ      Invesco QQQ ETF                88        72.00           
 9     FFIE     Faraday Future                 82        204.00          
 10    SNDL     Sundial Growers                79        -65.00          
+
+Trending Cryptocurrencies on Reddit in the past 24 hours
+Rank  Ticker   Name                           Mentions  24h Change (%) 
+======================================================================
+1     BTC      Bitcoin                        2200      10.00           
+2     ETH      Ethereum                       1800      -5.00           
+3     DOGE     Dogecoin                       1200      20.00          
+4     ADA      Cardano                        1000      15.00          
+5     XRP      Ripple                         800       12.00          
+
+Most mentioned Stocks & Cryptos on 4Chan /biz in the last 24h (BETA)
+Rank  Ticker   Name                           Mentions  24h Change (%) 
+======================================================================
+1     GME      GameStop                       500       12.00           
+2     AMC      AMC Entertainment              450       -8.00           
+3     TSLA     Tesla                          400       7.00            
+4     BTC      Bitcoin                        350       15.00           
+5     ETH      Ethereum                       300       -5.00           
