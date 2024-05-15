@@ -99,6 +99,7 @@ Rank  Ticker   Name                           Mentions  24h Change (%)
 3     TSLA     Tesla                          400       7.00            
 4     BTC      Bitcoin                        350       15.00           
 5     ETH      Ethereum                       300       -5.00           
+```
 
 ## Future Plans
 I am also currently working on developing a web or mobile application to make this tool more accessible and user-friendly. Stay tuned for updates!
