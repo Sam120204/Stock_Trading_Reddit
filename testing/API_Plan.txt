@@ -1,0 +1,32 @@
+stock_prediction/
+│
+├── data/
+│   ├── raw_data/
+│   ├── processed_data/
+│   └── features/
+│
+├── models/
+│   └── stock_model.pkl
+│
+├── notebooks/
+│   └── data_exploration.ipynb
+│
+├── src/
+│   ├── data_collection/
+│   │   └── reddit_client.py
+│   ├── data_preprocessing/
+│   │   └── preprocessing.py
+│   ├── feature_engineering/
+│   │   └── feature_engineering.py
+│   ├── model_training/
+│   │   └── training.py
+│   ├── api/
+│   │   └── app.py
+│   ├── database/
+│   │   └── database.py
+│   ├── utils/
+│   │   └── helpers.py
+│
+├── requirements.txt
+├── Dockerfile
+└── README.md
