@@ -3,28 +3,47 @@ import seaborn as sns
 from datetime import datetime, timedelta
 from reddit_client import get_reddit_instance
 from apewisdom_client import get_trending_stocks, get_trending_cryptos, get_trending_4chan
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def fetch_posts_comments(tickers, buy_sell_keywords):
     reddit = get_reddit_instance()
     subreddit = reddit.subreddit('investing')
-    cutoff_date = datetime.utcnow() - timedelta(days=15)
+    cutoff_date = datetime.utcnow() - timedelta(days=3)
+    seen_urls = set()
 
-    # Fetch and print posts within the last 15 days
-    for ticker in tickers:
+    def fetch_posts(ticker):
+        results = []
         query = f"{ticker} ({' OR '.join(buy_sell_keywords)})"
         for submission in subreddit.search(query, limit=50):
             submission_date = datetime.utcfromtimestamp(submission.created_utc)
-            if submission_date >= cutoff_date:
+            if submission_date >= cutoff_date and submission.url not in seen_urls:
                 if any(keyword in submission.title.lower() for keyword in buy_sell_keywords):
-                    print(f"Title: {submission.title}\nURL: {submission.url}\nDate: {submission_date}\n")
+                    results.append((submission.title, submission.url, submission_date))
+                    seen_urls.add(submission.url)
+        return results
 
-    # Fetch and print comments within the last 15 days
-    for comment in subreddit.comments(limit=1000):
-        comment_date = datetime.utcfromtimestamp(comment.created_utc)
-        if comment_date >= cutoff_date:
-            if any(ticker in comment.body for ticker in tickers):
-                if any(keyword in comment.body.lower() for keyword in buy_sell_keywords):
-                    print(f"Comment: {comment.body}\nURL: https://www.reddit.com{comment.permalink}\nDate: {comment_date}\n")
+    def fetch_comments():
+        results = []
+        for comment in subreddit.comments(limit=1000):
+            comment_date = datetime.utcfromtimestamp(comment.created_utc)
+            comment_url = f"https://www.reddit.com{comment.permalink}"
+            if comment_date >= cutoff_date and comment_url not in seen_urls:
+                if any(ticker in comment.body for ticker in tickers):
+                    if any(keyword in comment.body.lower() for keyword in buy_sell_keywords):
+                        results.append((comment.body, comment_url, comment_date))
+                        seen_urls.add(comment_url)
+        return results
+
+    # Use ThreadPoolExecutor to fetch posts concurrently
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(fetch_posts, ticker) for ticker in tickers]
+        for future in as_completed(futures):
+            for title, url, date in future.result():
+                print(f"Title: {title}\nURL: {url}\nDate: {date}\n")
+
+    # Fetch comments
+    for body, url, date in fetch_comments():
+        print(f"Comment: {body}\nURL: {url}\nDate: {date}\n")
 
 def display_trending_items(items, title):
     print(f"\n{title}")
