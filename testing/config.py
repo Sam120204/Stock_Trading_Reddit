@@ -1,5 +1,5 @@
-REDDIT_CLIENT_ID ='L5x_OBLY_HG9UxgxfOg69Q'
-REDDIT_SECRET ='3f2igWO4Hdcu404B3KxVV81nE_hnsA'
-REDDIT_USER_AGENT ='python:StockPredictionApp:v1.0 (by /u/Stock_prediction)'
+reddit_client_id ='L5x_OBLY_HG9UxgxfOg69Q'
+reddit_client_secret ='3f2igWO4Hdcu404B3KxVV81nE_hnsA'
+reddit_user_agent ='python:StockPredictionApp:v1.0 (by /u/Stock_prediction)'
 REDDIT_USERNAME ='Stock_prediction'
 REDDIT_PASSWORD ='curry666666'
