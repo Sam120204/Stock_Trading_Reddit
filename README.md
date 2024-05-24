@@ -12,6 +12,8 @@ TrendSage aims to develop a correlation between stock predictions based on the p
 - Retrieve and display Reddit posts and comments related to trending stocks and cryptocurrencies within the last 15 days
 - Calculate and display the 24-hour change in mentions of each stock and cryptocurrency
 - Visualize the data using bar charts for mentions and 24-hour change percentage
+- Implement a machine learning model to predict stock trends based on Reddit data
+- Save data to MongoDB for persistent storage
 
 ## Prerequisites
 
@@ -20,6 +22,10 @@ TrendSage aims to develop a correlation between stock predictions based on the p
 - Requests library
 - Matplotlib
 - Seaborn
+- Pandas
+- Scikit-learn
+- TextBlob (for sentiment analysis)
+- MongoDB (for data storage)
 
 ## Setup
 
@@ -43,6 +49,11 @@ TrendSage aims to develop a correlation between stock predictions based on the p
     REDDIT_USERNAME = 'your_reddit_username'
     REDDIT_PASSWORD = 'your_reddit_password'
     ```
+4. **Set up MongoDB**
+   Make sure MongoDB is installed and running. You can start MongoDB with:
+    ```sh
+    mongod --dbpath <your_db_path>
+    ```
 
 ## Usage
 
@@ -58,11 +69,23 @@ TrendSage aims to develop a correlation between stock predictions based on the p
     The script will generate bar charts for mentions and 24-hour change percentage for trending stocks, cryptocurrencies, and 4Chan mentions.
 
 ## Project Structure
-
+- `apewisdom dir`: Contains the existing project that could predict the stock profit using Ape Wisdom API and Reddit Post API.
 - `config.py`: Contains Reddit API credentials.
 - `main.py`: Main script to fetch and display trending stocks, cryptocurrencies, 4Chan mentions, and Reddit discussions.
 - `reddit_client.py`: Handles Reddit API connection and data retrieval.
 - `apewisdom_client.py`: Fetches trending stocks, cryptocurrencies, and 4Chan data from Apewisdom API.
+- `README.md`: Project documentation.
+
+- `tesing dir`: Contains the currently developing API that works similar to Ape Wisdom API.
+- `config.py`: Contains Reddit API credentials.
+- `main.py`: Main script to fetch and display trending stocks, cryptocurrencies, 4Chan mentions, Reddit discussions, and to train the machine learning model.
+- `src/data_collection/reddit_client.py`: Handles Reddit API connection and data retrieval.
+- `src/data_collection/apewisdom_client.py`: Fetches trending stocks, cryptocurrencies, and 4Chan data from Apewisdom API.
+- `src/data_preprocessing/preprocessing.py`: Contains functions for data preprocessing and sentiment analysis.
+- `src/feature_engineering/feature_engineering.py`: Contains functions for feature engineering.
+- `src/model_training/training.py`: Contains functions for training and evaluating the machine learning model.
+- `src/database/database.py`: Contains functions for saving data to MongoDB.
+- `requirements.txt`: Lists all the required libraries.
 - `README.md`: Project documentation.
 
 ## Example Output
