@@ -69,14 +69,21 @@ TrendSage aims to develop a correlation between stock predictions based on the p
     The script will generate bar charts for mentions and 24-hour change percentage for trending stocks, cryptocurrencies, and 4Chan mentions.
 
 ## Project Structure
-- `apewisdom dir`: Contains the existing project that could predict the stock profit using Ape Wisdom API and Reddit Post API.
+
+### `apewisdom` Directory
+
+Contains the existing project that predicts the stock profit using Apewisdom API and Reddit Post API.
+
 - `config.py`: Contains Reddit API credentials.
 - `main.py`: Main script to fetch and display trending stocks, cryptocurrencies, 4Chan mentions, and Reddit discussions.
 - `reddit_client.py`: Handles Reddit API connection and data retrieval.
 - `apewisdom_client.py`: Fetches trending stocks, cryptocurrencies, and 4Chan data from Apewisdom API.
 - `README.md`: Project documentation.
 
-- `tesing dir`: Contains the currently developing API that works similar to Ape Wisdom API.
+### `testing` Directory
+
+Contains the currently developing API that works similar to Apewisdom API.
+
 - `config.py`: Contains Reddit API credentials.
 - `main.py`: Main script to fetch and display trending stocks, cryptocurrencies, 4Chan mentions, Reddit discussions, and to train the machine learning model.
 - `src/data_collection/reddit_client.py`: Handles Reddit API connection and data retrieval.
