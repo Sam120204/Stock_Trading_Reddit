@@ -1,0 +1,7 @@
+praw
+pandas
+textblob
+scikit-learn
+flask
+pymongo
+joblib
