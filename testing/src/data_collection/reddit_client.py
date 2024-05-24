@@ -1,46 +1,57 @@
+# reddit_client.py
+
 import praw
-import config
-from datetime import datetime, timedelta
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import pandas as pd
+from datetime import datetime, timedelta
+from config ***REMOVED***ddit_client_id, reddit_client_secret, reddit_user_agent
 
 def get_reddit_instance():
-    reddit = praw.Reddit(
-        client_id=config.REDDIT_CLIENT_ID,
-        client_secret=config.REDDIT_SECRET,
-        user_agent=config.REDDIT_USER_AGENT,
-        username=config.REDDIT_USERNAME,
-        password=config.REDDIT_PASSWORD
+    return praw.Reddit(
+        client_id=reddit_client_id,
+        client_secret=reddit_client_secret,
+        user_agent=reddit_user_agent
     )
-    return reddit
 
 def fetch_posts_comments(tickers, buy_sell_keywords, days=15):
     reddit = get_reddit_instance()
     subreddit = reddit.subreddit('investing')
     cutoff_date = datetime.utcnow() - timedelta(days=days)
+    
+    data = []
     seen_urls = set()
-    posts = []
 
-    def fetch_posts(ticker):
-        results = []
+    # Fetch posts within the last `days` days
+    for ticker in tickers:
         query = f"{ticker} ({' OR '.join(buy_sell_keywords)})"
         for submission in subreddit.search(query, limit=50):
             submission_date = datetime.utcfromtimestamp(submission.created_utc)
             if submission_date >= cutoff_date and submission.url not in seen_urls:
-                if any(keyword in submission.title.lower() for keyword in buy_sell_keywords):
-                    results.append({
-                        'ticker': ticker,
-                        'title': submission.title,
-                        'selftext': submission.selftext,
-                        'created_utc': submission_date,
-                        'url': submission.url
-                    })
-                    seen_urls.add(submission.url)
-        return results
+                seen_urls.add(submission.url)
+                data.append({
+                    'ticker': ticker,
+                    'title': submission.title,
+                    'url': submission.url,
+                    'created_utc': submission_date,
+                    'selftext': submission.selftext,
+                    'mentions': sum(keyword in submission.title.lower() for keyword in buy_sell_keywords)
+                })
+                
+    # Fetch comments within the last `days` days
+    for comment in subreddit.comments(limit=1000):
+        comment_date = datetime.utcfromtimestamp(comment.created_utc)
+        if comment_date >= cutoff_date:
+            body = comment.body.lower()
+            for ticker in tickers:
+                if ticker in body:
+                    mentions = sum(keyword in body for keyword in buy_sell_keywords)
+                    if mentions > 0:
+                        data.append({
+                            'ticker': ticker,
+                            'title': '',
+                            'url': f"https://www.reddit.com{comment.permalink}",
+                            'created_utc': comment_date,
+                            'selftext': '',
+                            'mentions': mentions
+                        })
 
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(fetch_posts, ticker) for ticker in tickers]
-        for future in as_completed(futures):
-            posts.extend(future.result())
-
-    return pd.DataFrame(posts)
+    return pd.DataFrame(data)
