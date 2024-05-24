@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Add src to sys.path to import modules from src directory
+sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+
 import pandas as pd
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed

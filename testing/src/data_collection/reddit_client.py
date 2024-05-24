@@ -1,5 +1,8 @@
 import praw
 import config
+from datetime import datetime, timedelta
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import pandas as pd
 
 def get_reddit_instance():
     reddit = praw.Reddit(
@@ -11,7 +14,7 @@ def get_reddit_instance():
     )
     return reddit
 
-def fetch_posts_comments(tickers, buy_sell_keywords, days=3):
+def fetch_posts_comments(tickers, buy_sell_keywords, days=15):
     reddit = get_reddit_instance()
     subreddit = reddit.subreddit('investing')
     cutoff_date = datetime.utcnow() - timedelta(days=days)
