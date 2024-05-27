@@ -1,5 +1,7 @@
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+import joblib
 
 def train_model(data):
     features = ['mentions', 'day', 'month', 'year', 'sentiment']
@@ -14,9 +16,23 @@ def train_model(data):
         if feature not in data.columns:
             raise KeyError(f"Feature '{feature}' not found in data columns.")
     
-    X_train, X_test, y_train, y_test = train_test_split(data[features], data[target], test_size=0.2, random_state=42)
+    X = data[features]
+    y = data[target]
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
     model = LinearRegression()
     model.fit(X_train, y_train)
     
-    return model
+    return model, X_test, y_test
+
+def evaluate_model(model, X_test, y_test):
+    predictions = model.predict(X_test)
+    mse = mean_squared_error(y_test, predictions)
+    return mse
+
+def save_model(model, model_path):
+    joblib.dump(model, model_path)
+
+def load_model(model_path):
+    return joblib.load(model_path)
