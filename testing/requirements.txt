@@ -5,3 +5,4 @@ scikit-learn
 flask
 pymongo
 joblib
+Flask==2.0.1
