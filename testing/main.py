@@ -52,3 +52,25 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+    """
+    next step: Using LLM to help with our prediction.
+    find any correlaiton between result on the reddit and the actual stock ticker trend
+    change within a month for top 100 stock  tickers (correalation):
+        - Trend for stock ticker each day and combine them for 15 days maybe
+        - coompare it with the actual price for 15 days
+
+    using database to store the trending stocks from different days
+        - catch stock which from top 100 to top 1 within a day - target
+        
+    
+    # of comments and upvotes
+    velocity of the comments and upvotes
+    ex:
+    LLM agree the post based on the comments (upvotes/downvotes)?
+    
+    #smaller stock:
+    
+    
+    """
