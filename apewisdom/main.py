@@ -4,6 +4,9 @@ from datetime import datetime, timedelta
 from reddit_client import get_reddit_instance
 from apewisdom_client import get_trending_stocks, get_trending_cryptos, get_trending_4chan
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from database import MongoDBClient
+import schedule
+import time
 
 def fetch_posts_comments(tickers, buy_sell_keywords):
     reddit = get_reddit_instance()
@@ -78,29 +81,38 @@ def visualize_trending_items(items, title):
     plt.xticks(rotation=90)
     plt.show()
 
-def main():
+def gather_data():
     buy_sell_keywords = ['buy', 'sell', 'purchase', 'short', 'long', 'hold', 'trade']
+
+    # Initialize MongoDB client with correct database and collection names
+    db_client = MongoDBClient(db_name="stock_trends", collection_name="trending_stocks")
 
     # Fetch and display trending stocks from Apewisdom
     trending_stocks = get_trending_stocks(filter='all-stocks')
     tickers_stocks = [stock['ticker'] for stock in trending_stocks]
+
+    # Add fetch date to trending stocks
+    for stock in trending_stocks:
+        stock["fetch_date"] = datetime.utcnow()
+
+    # Insert trending stocks into MongoDB
+    db_client.insert_data(trending_stocks)
+
     display_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
     visualize_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
     fetch_posts_comments(tickers_stocks, buy_sell_keywords)
 
-    # Fetch and display trending cryptocurrencies from Apewisdom
-    trending_cryptos = get_trending_cryptos(filter='all-crypto')
-    tickers_cryptos = [crypto['ticker'] for crypto in trending_cryptos]
-    display_trending_items(trending_cryptos, "Trending Cryptocurrencies on Reddit in the past 24 hours")
-    visualize_trending_items(trending_cryptos, "Trending Cryptocurrencies on Reddit in the past 24 hours")
-    fetch_posts_comments(tickers_cryptos, buy_sell_keywords)
+def main():
+    # Schedule the gather_data function to run every hour
+    schedule.every(1).hours.do(gather_data)
 
-    # Fetch and display trending items on 4Chan /biz from Apewisdom
-    trending_4chan = get_trending_4chan(filter='4chan')
-    tickers_4chan = [item['ticker'] for item in trending_4chan]
-    display_trending_items(trending_4chan, "Most mentioned Stocks & Cryptos on 4Chan /biz in the last 24h (BETA)")
-    visualize_trending_items(trending_4chan, "Most mentioned Stocks & Cryptos on 4Chan /biz in the last 24h (BETA)")
-    fetch_posts_comments(tickers_4chan, buy_sell_keywords)
+    # Run the gather_data function once immediately
+    gather_data()
+
+    # Keep the script running to maintain the schedule
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
