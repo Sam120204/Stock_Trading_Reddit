@@ -1,7 +1,3 @@
-Sure, here's a detailed `README.md` section covering the setup and operations we've done so far for your "TrendSage - Stock Prediction Reddit Tool":
-
----
-
 # TrendSage - Stock Prediction Reddit Tool
 
 ## Overview
