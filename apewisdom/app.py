@@ -1,14 +1,12 @@
 import logging
 import traceback
-import matplotlib.pyplot as plt
-import seaborn as sns
-import plotly.express as px
 from datetime import datetime, timedelta
+import streamlit as st
+import pandas as pd
+import plotly.express as px
 from reddit_client import get_reddit_instance
-from apewisdom_client import get_trending_stocks, get_trending_cryptos, get_trending_4chan
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from apewisdom_client import get_trending_stocks
 from database import MongoDBClient
-import functions_framework
 
 logging.basicConfig(level=logging.INFO)
 
@@ -88,7 +86,6 @@ def gather_data():
 
         data = display_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
         fig_mentions, fig_changes = visualize_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
-     #   fetch_posts_comments(tickers_stocks, buy_sell_keywords)
         return data, fig_mentions, fig_changes
     except Exception as e:
         logging.error("Error in gather_data function")
@@ -96,20 +93,31 @@ def gather_data():
         logging.error(traceback.format_exc())
         return [], None, None
 
-@functions_framework.http
-def fetch_trending_stocks(request):
-    try:
-        gather_data()
-        return "Data fetched and stored successfully."
-    except Exception as e:
-        logging.error("Error in fetch_trending_stocks function")
-        logging.error(e)
-        logging.error(traceback.format_exc())
-        return "Error fetching and storing data", 500
+def main():
+    st.title("Trending Stocks on Reddit")
+    st.write("Displaying the trending stocks data fetched from Reddit in the past 24 hours.")
+
+    # Fetch the data
+    data, fig_mentions, fig_changes = gather_data()
+
+    # Define column names
+    columns = ["Rank", "Ticker", "Name", "Mentions", "24h Change (%)"]
+
+    # Display data in a table
+    if data:
+        df = pd.DataFrame(data, columns=columns)
+        df.set_index('Rank', inplace=True)
+        st.table(df)
+    else:
+        st.write("No data available.")
+
+    # Display the visualizations using Plotly
+    if fig_mentions:
+        st.plotly_chart(fig_mentions)
+
+    if fig_changes:
+        st.plotly_chart(fig_changes)
+
 
 if __name__ == "__main__":
-    class MockRequest:
-        def __init__(self):
-            self.method = "GET"
-            self.args = {}
-    fetch_trending_stocks(MockRequest())
+    main()

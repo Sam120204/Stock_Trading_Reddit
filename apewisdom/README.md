@@ -12,16 +12,14 @@ TrendSage aims to develop a correlation between stock predictions based on posts
 - Visualize the data using bar charts for mentions and 24-hour change percentage
 - Implement a machine learning model to predict stock trends based on Reddit data
 - Save data to MongoDB for persistent storage
-- Automatically gather data every hour
+- Deploy Streamlit app on Google Cloud Run
 
 ## Prerequisites
-- Python 3.6 or higher
+- Python 3.9 or higher
 - PRAW (Python Reddit API Wrapper)
 - Requests library
-- Matplotlib
-- Seaborn
+- Plotly
 - Pandas
-- Schedule
 - MongoDB (for data storage)
 
 ## Setup
@@ -47,7 +45,7 @@ python -m venv venv
 Install the necessary Python packages:
 
 ```sh
-pip install praw requests matplotlib seaborn pandas schedule pymongo
+pip install -r requirements.txt
 ```
 
 ### 4. Set Up MongoDB
@@ -104,45 +102,74 @@ class MongoDBClient:
         return list(self.collection.find(query))
 ```
 
-### 7. Running the Script
+### 7. Build and Deploy the Streamlit App to Google Cloud Run
 
-Run the main script to fetch and store trending stocks:
-
-```sh
-python main.py
-```
-
-### 8. Automate Data Gathering
-
-To continuously gather data every hour, the script includes scheduling functionality using the `schedule` library. Ensure the script runs continuously:
-
-```python
-import schedule
-import time
-
-def gather_data():
-    # Fetch and store trending stocks from Apewisdom
-    pass  # (Your existing code for gathering data)
-
-def main():
-    schedule.every(1).hours.do(gather_data)
-    gather_data()  # Run once immediately
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
-
-if __name__ == "__main__":
-    main()
-```
-
-Run the script to start the continuous data gathering process:
+#### 7.1 Build the Docker Image
 
 ```sh
-python main.py
+docker build -t streamlit-app .
 ```
 
-### 9. Verifying Data in MongoDB
+#### 7.2 Tag the Docker Image
+
+```sh
+docker tag streamlit-app us-central1-docker.pkg.dev/trendsage/gcf-artifacts/streamlit-app
+```
+
+#### 7.3 Push the Docker Image
+
+```sh
+docker push us-central1-docker.pkg.dev/trendsage/gcf-artifacts/streamlit-app
+```
+
+#### 7.4 Deploy to Google Cloud Run
+
+```sh
+gcloud run deploy streamlit-app --image us-central1-docker.pkg.dev/trendsage/gcf-artifacts/streamlit-app --platform managed --region us-central1 --allow-unauthenticated
+```
+
+### 8. Access the App
+
+Once deployed, you can access the Streamlit app via the URL provided by Google Cloud Run.
+
+### Example Output
+
+### Trending Stocks on Reddit in the past 24 hours
+
+```
+Rank  Ticker   Name                           Mentions  24h Change (%) 
+======================================================================
+1     NVDA     NVIDIA                         1258      -32.00           
+2     SPY      SPDR S&P 500 ETF Trust         442       11.34           
+3     CRM      Salesforce                     298       -8.33           
+...
+```
+
+### Visualizations
+
+The script generates bar charts for mentions and 24-hour change percentages for the trending stocks and cryptocurrencies.
+
+## Files
+
+- `app.py`: Main Streamlit app file
+- `config.py`: Configuration file for Reddit API credentials
+- `database.py`: MongoDB client for data storage
+- `requirements.txt`: List of Python dependencies
+- `Dockerfile`: Docker configuration for the app
+- `reddit_client.py`: Reddit client setup
+- `apewisdom_client.py`: Client to fetch data from Apewisdom API
+
+## Running the App Locally
+
+You can also run the Streamlit app locally by executing:
+
+```sh
+streamlit run app.py
+```
+
+This will start the app on `localhost:8501`.
+
+## Verifying Data in MongoDB
 
 You can verify that the data is being stored correctly using MongoDB Compass or the MongoDB shell.
 
@@ -172,21 +199,4 @@ You can verify that the data is being stored correctly using MongoDB Compass or 
     ```sh
     db.trending_stocks.find().pretty()
     ```
-
-## Example Output
-
-### Trending Stocks on Reddit in the past 24 hours
-
 ```
-Rank  Ticker   Name                           Mentions  24h Change (%) 
-======================================================================
-1     NVDA     NVIDIA                         1258      -32.00           
-2     SPY      SPDR S&P 500 ETF Trust         442       11.34           
-3     CRM      Salesforce                     298       -8.33           
-...
-```
-
-### Visualizations
-
-The script generates bar charts for mentions and 24-hour change percentages for the trending stocks and cryptocurrencies.
-

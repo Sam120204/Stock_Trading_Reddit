@@ -1,0 +1,10 @@
+# .gcloudignore
+.gcloudignore
+venv/
+*.pyc
+__pycache__/
+.idea/
+.vscode/
+*.log
+.DS_Store
+*.png
