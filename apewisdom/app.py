@@ -122,135 +122,65 @@
 # if __name__ == "__main__":
 #     main()
 
-import logging
-import traceback
-from datetime import datetime, timedelta
 import streamlit as st
+***REMOVED***quests
+from pymongo import MongoClient
 import pandas as pd
-import plotly.express as px
-from reddit_client import get_reddit_instance
-from apewisdom_client import get_trending_stocks
-from database import MongoDBClient
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s %(levelname)s %(message)s',
-    handlers=[
-        logging.FileHandler("streamlit_app.log"),
-        logging.StreamHandler()
-***REMOVED***
-)
+# Fetch secrets from Streamlit's secrets management
+REDDIT_CLIENT_ID = st.secrets["REDDIT_CLIENT_ID"]
+REDDIT_SECRET = st.secrets["REDDIT_SECRET"]
+REDDIT_USER_AGENT = st.secrets["REDDIT_USER_AGENT"]
+REDDIT_USERNAME = st.secrets["REDDIT_USERNAME"]
+REDDIT_PASSWORD = st.secrets["REDDIT_PASSWORD"]
 
-def fetch_posts_comments(tickers, buy_sell_keywords):
-    reddit = get_reddit_instance()
-    subreddit = reddit.subreddit('investing')
-    cutoff_date = datetime.utcnow() - timedelta(days=1)
-    seen_urls = set()
+MONGO_URI = st.secrets["MONGO_URI"]
+DB_NAME = st.secrets["DB_NAME"]
+COLLECTION_NAME = st.secrets["COLLECTION_NAME"]
 
-    def fetch_posts(ticker):
-        results = []
-        query = f"{ticker} ({' OR '.join(buy_sell_keywords)})"
-        for submission in subreddit.search(query, limit=50):
-            submission_date = datetime.utcfromtimestamp(submission.created_utc)
-            if submission_date >= cutoff_date and submission.url not in seen_urls:
-                if any(keyword in submission.title.lower() for keyword in buy_sell_keywords):
-                    results.append((submission.title, submission.url, submission_date))
-                    seen_urls.add(submission.url)
-        return results
-
-    def fetch_comments():
-        results = []
-        for comment in subreddit.comments(limit=1000):
-            comment_date = datetime.utcfromtimestamp(comment.created_utc)
-            comment_url = f"https://www.reddit.com{comment.permalink}"
-            if comment_date >= cutoff_date and comment_url not in seen_urls:
-                if any(ticker in comment.body for ticker in tickers):
-                    if any(keyword in comment.body.lower() for keyword in buy_sell_keywords):
-                        results.append((comment.body, comment_url, comment_date))
-                        seen_urls.add(comment_url)
-        return results
-
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(fetch_posts, ticker) for ticker in tickers]
-        for future in as_completed(futures):
-            for title, url, date in future.result():
-                logging.info(f"Title: {title}\nURL: {url}\nDate: {date}\n")
-
-    for body, url, date in fetch_comments():
-        logging.info(f"Comment: {body}\nURL: {url}\nDate: {date}\n")
-
-def display_trending_items(items, title):
-    logging.info(f"\n{title}")
-    logging.info(f"{'Rank':<5}{'Ticker':<10}{'Name':<30}{'Mentions':<10}{'24h Change (%)':<15}")
-    logging.info("="*70)
-    data = []
-    for i, item in enumerate(items, start=1):
-        mentions = item['mentions']
-        mentions_24h_ago = item.get('mentions_24h_ago', 0)
-        change_24h = (mentions - mentions_24h_ago) / mentions_24h_ago * 100 if mentions_24h_ago else 0
-        data.append([i, item['ticker'], item['name'], mentions, change_24h])
-        logging.info(f"{i:<5}{item['ticker']:<10}{item['name']:<30}{mentions:<10}{change_24h:<15.2f}")
-    return data
-
-def visualize_trending_items(items, title):
-    tickers = [item['ticker'] for item in items]
-    mentions = [item['mentions'] for item in items]
-    changes = [(item['mentions'] - item.get('mentions_24h_ago', 0)) / item.get('mentions_24h_ago', 0) * 100 if item.get('mentions_24h_ago', 0) else 0 for item in items]
-
-    fig_mentions = px.bar(x=tickers, y=mentions, labels={'x': 'Ticker', 'y': 'Mentions'}, title=f'{title} - Mentions')
-    fig_changes = px.bar(x=tickers, y=changes, labels={'x': 'Ticker', 'y': '24h Change (%)'}, title=f'{title} - 24h Change (%)')
-
-    return fig_mentions, fig_changes
-
-def gather_data():
+def fetch_data():
     try:
-        buy_sell_keywords = ['buy', 'sell', 'purchase', 'short', 'long', 'hold', 'trade']
-        db_client = MongoDBClient(db_name="stock_trends", collection_name="trending_stocks")
+        # Your logic to fetch data from Reddit
+        # Replace this with your actual data fetching logic
+        reddit_auth = requests.auth.HTTPBasicAuth(REDDIT_CLIENT_ID, REDDIT_SECRET)
+        data = {'grant_type': 'password',
+                'username': REDDIT_USERNAME,
+                'password': REDDIT_PASSWORD}
+        headers = {'User-Agent': REDDIT_USER_AGENT}
+        res = requests.post('https://www.reddit.com/api/v1/access_token',
+                            auth=reddit_auth, data=data, headers=headers)
+        token = res.json()['access_token']
+        headers['Authorization'] = f'bearer {token}'
+        
+        # Fetch trending stocks data
+        response = requests.get('https://oauth.reddit.com/r/wallstreetbets/hot',
+                                headers=headers)
+        data = response.json()
+        
+        # Process data and store it in MongoDB
+        client = MongoClient(MONGO_URI)
+        db = client[DB_NAME]
+        collection = db[COLLECTION_NAME]
+        
+        # Assuming data contains the required information in the correct format
+        collection.insert_many(data['data']['children'])
 
-        trending_stocks = get_trending_stocks(filter='all-stocks')
-        logging.info(f"Trending stocks fetched: {trending_stocks}")
-        tickers_stocks = [stock['ticker'] for stock in trending_stocks]
-
-        for stock in trending_stocks:
-            stock["fetch_date"] = datetime.utcnow()
-
-        db_client.insert_data(trending_stocks)
-        logging.info("Data inserted into the database successfully.")
-
-        data = display_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
-        fig_mentions, fig_changes = visualize_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
-        return data, fig_mentions, fig_changes
-    except Exception as e:
-        logging.error("Error in gather_data function")
-        logging.error(e)
-        logging.error(traceback.format_exc())
-        return [], None, None
+        # Convert to DataFrame
+        df = pd.DataFrame(data['data']['children'])
+        return df
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching data: {e}")
+        return pd.DataFrame()
 
 def main():
     st.title("Trending Stocks on Reddit")
     st.write("Displaying the trending stocks data fetched from Reddit in the past 24 hours.")
 
-    # Fetch the data
-    data, fig_mentions, fig_changes = gather_data()
-
-    # Define column names
-    columns = ["Rank", "Ticker", "Name", "Mentions", "24h Change (%)"]
-
-    # Display data in a table
-    if data:
-        df = pd.DataFrame(data, columns=columns)
-        df.set_index('Rank', inplace=True)
-        st.table(df)
+    df = fetch_data()
+    if df.empty:
+        st.error("No data available.")
     else:
-        st.write("No data available.")
-
-    # Display the visualizations using Plotly
-    if fig_mentions:
-        st.plotly_chart(fig_mentions)
-
-    if fig_changes:
-        st.plotly_chart(fig_changes)
+        st.table(df)
 
 if __name__ == "__main__":
     main()
