@@ -9,6 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import praw
 from apewisdom_client import get_trending_stocks
 
+
 # Configure logging
 logging.basicConfig(
     level=logging.DEBUG,
@@ -130,7 +131,6 @@ def main():
     st.title("Trending Stocks on Reddit")
     st.write("Displaying the trending stocks data fetched from Reddit in the past 24 hours.")
 
-    # Fetch the data
     data, fig_mentions, fig_changes = gather_data()
 
     # Define column names
