@@ -19,15 +19,17 @@ logging.basicConfig(
 ***REMOVED***
 )
 
-# Initialize MongoDB connection
 @st.cache_resource
 def init_mongo_connection():
-    return MongoClient(st.secrets["mongo"]["uri"])
+    return MongoClient(
+        st.secrets["mongo"]["uri"],
+        tls=True,
+        tlsAllowInvalidCertificates=True
+    )
 
 client = init_mongo_connection()
 db = client[st.secrets["mongo"]["db_name"]]
 
-# Initialize Reddit connection
 @st.cache_resource
 def get_reddit_instance():
     reddit = praw.Reddit(
