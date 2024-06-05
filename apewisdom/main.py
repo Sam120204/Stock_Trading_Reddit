@@ -1,16 +1,42 @@
 import logging
 import traceback
-import matplotlib.pyplot as plt
-import seaborn as sns
-import plotly.express as px
 from datetime import datetime, timedelta
-from reddit_client import get_reddit_instance
-from apewisdom_client import get_trending_stocks, get_trending_cryptos, get_trending_4chan
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+from pymongo import MongoClient
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from database import MongoDBClient
-import functions_framework
+import praw
 
-logging.basicConfig(level=logging.INFO)
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    handlers=[
+        logging.FileHandler("streamlit_app.log"),
+        logging.StreamHandler()
+***REMOVED***
+)
+
+# Initialize MongoDB connection
+@st.cache_resource
+def init_mongo_connection():
+    return MongoClient(st.secrets["mongo"]["uri"])
+
+client = init_mongo_connection()
+db = client[st.secrets["mongo"]["db_name"]]
+
+# Initialize Reddit connection
+@st.cache_resource
+def get_reddit_instance():
+    reddit = praw.Reddit(
+        client_id=st.secrets["reddit"]["client_id"],
+        client_secret=st.secrets["reddit"]["client_secret"],
+        user_agent=st.secrets["reddit"]["user_agent"],
+        username=st.secrets["reddit"]["username"],
+        password=st.secrets["reddit"]["password"]
+    )
+    return reddit
 
 def fetch_posts_comments(tickers, buy_sell_keywords):
     reddit = get_reddit_instance()
@@ -76,19 +102,19 @@ def visualize_trending_items(items, title):
 def gather_data():
     try:
         buy_sell_keywords = ['buy', 'sell', 'purchase', 'short', 'long', 'hold', 'trade']
-        db_client = MongoDBClient(db_name="stock_trends", collection_name="trending_stocks")
-
         trending_stocks = get_trending_stocks(filter='all-stocks')
+        logging.info(f"Trending stocks fetched: {trending_stocks}")
         tickers_stocks = [stock['ticker'] for stock in trending_stocks]
 
         for stock in trending_stocks:
             stock["fetch_date"] = datetime.utcnow()
 
-        db_client.insert_data(trending_stocks)
+        # Insert data into MongoDB
+        db[st.secrets["mongo"]["collection_name"]].insert_many(trending_stocks)
+        logging.info("Data inserted into the database successfully.")
 
         data = display_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
         fig_mentions, fig_changes = visualize_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
-     #   fetch_posts_comments(tickers_stocks, buy_sell_keywords)
         return data, fig_mentions, fig_changes
     except Exception as e:
         logging.error("Error in gather_data function")
@@ -96,20 +122,30 @@ def gather_data():
         logging.error(traceback.format_exc())
         return [], None, None
 
-@functions_framework.http
-def fetch_trending_stocks(request):
-    try:
-        gather_data()
-        return "Data fetched and stored successfully."
-    except Exception as e:
-        logging.error("Error in fetch_trending_stocks function")
-        logging.error(e)
-        logging.error(traceback.format_exc())
-        return "Error fetching and storing data", 500
+def main():
+    st.title("Trending Stocks on Reddit")
+    st.write("Displaying the trending stocks data fetched from Reddit in the past 24 hours.")
+
+    # Fetch the data
+    data, fig_mentions, fig_changes = gather_data()
+
+    # Define column names
+    columns = ["Rank", "Ticker", "Name", "Mentions", "24h Change (%)"]
+
+    # Display data in a table
+    if data:
+        df = pd.DataFrame(data, columns=columns)
+        df.set_index('Rank', inplace=True)
+        st.table(df)
+    else:
+        st.write("No data available.")
+
+    # Display the visualizations using Plotly
+    if fig_mentions:
+        st.plotly_chart(fig_mentions)
+
+    if fig_changes:
+        st.plotly_chart(fig_changes)
 
 if __name__ == "__main__":
-    class MockRequest:
-        def __init__(self):
-            self.method = "GET"
-            self.args = {}
-    fetch_trending_stocks(MockRequest())
+    main()
