@@ -1,12 +1,19 @@
 from pymongo import MongoClient
 import config
-from datetime import datetime, timedelta
+import logging
 
 class MongoDBClient:
     def __init__(self, db_name, collection_name, uri=config.MONGO_URI):
-        self.client = MongoClient(uri)
-        self.db = self.client[db_name]
-        self.collection = self.db[collection_name]
+        try:
+            # Adding SSL configurations explicitly
+            self.client = MongoClient(uri, tls=True, tlsAllowInvalidCertificates=True)
+            self.db = self.client[db_name]
+            self.collection = self.db[collection_name]
+            logging.info("Successfully connected to MongoDB")
+        except Exception as e:
+            logging.error("Error connecting to MongoDB")
+            logging.error(e)
+            raise
 
     def insert_data(self, data):
         if isinstance(data, list):
