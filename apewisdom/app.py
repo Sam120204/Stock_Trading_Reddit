@@ -6,9 +6,26 @@ import pandas as pd
 import plotly.express as px
 from reddit_client import get_reddit_instance
 from apewisdom_client import get_trending_stocks
-from database import MongoDBClient
+from pymongo import MongoClient
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-logging.basicConfig(level=logging.INFO)
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    handlers=[
+        logging.FileHandler("streamlit_app.log"),
+        logging.StreamHandler()
+    ]
+)
+
+# Initialize MongoDB connection
+@st.cache_resource
+def init_connection():
+    return MongoClient(**st.secrets["mongo"])
+
+client = init_connection()
+db = client.stock_trends
 
 def fetch_posts_comments(tickers, buy_sell_keywords):
     reddit = get_reddit_instance()
@@ -74,15 +91,16 @@ def visualize_trending_items(items, title):
 def gather_data():
     try:
         buy_sell_keywords = ['buy', 'sell', 'purchase', 'short', 'long', 'hold', 'trade']
-        db_client = MongoDBClient(db_name="stock_trends", collection_name="trending_stocks")
-
         trending_stocks = get_trending_stocks(filter='all-stocks')
+        logging.info(f"Trending stocks fetched: {trending_stocks}")
         tickers_stocks = [stock['ticker'] for stock in trending_stocks]
 
         for stock in trending_stocks:
             stock["fetch_date"] = datetime.utcnow()
 
-        db_client.insert_data(trending_stocks)
+        # Insert data into MongoDB
+        db.trending_stocks.insert_many(trending_stocks)
+        logging.info("Data inserted into the database successfully.")
 
         data = display_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
         fig_mentions, fig_changes = visualize_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
@@ -117,7 +135,6 @@ def main():
 
     if fig_changes:
         st.plotly_chart(fig_changes)
-
 
 if __name__ == "__main__":
     main()
