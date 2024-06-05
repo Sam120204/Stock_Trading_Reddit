@@ -7,11 +7,11 @@ import plotly.express as px
 from pymongo import MongoClient
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import praw
-from apewisdom_client import get_trending_stocks  # Ensure this import is correct
+from apewisdom_client import get_trending_stocks
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s %(levelname)s %(message)s',
     handlers=[
         logging.FileHandler("streamlit_app.log"),
