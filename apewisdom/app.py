@@ -116,6 +116,7 @@ def gather_data():
 
         data = display_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
         fig_mentions, fig_changes = visualize_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
+        logging.info(f"Data for display: {data}")
         return data, fig_mentions, fig_changes
     except Exception as e:
         logging.error("Error in gather_data function")
