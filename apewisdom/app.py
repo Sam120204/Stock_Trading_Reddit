@@ -126,55 +126,42 @@ import streamlit as st
 ***REMOVED***quests
 from pymongo import MongoClient
 import pandas as pd
+from urllib.parse import quote_plus
 
 # Fetch secrets from Streamlit's secrets management
-REDDIT_CLIENT_ID = st.secrets["REDDIT_CLIENT_ID"]
-REDDIT_SECRET = st.secrets["REDDIT_SECRET"]
-REDDIT_USER_AGENT = st.secrets["REDDIT_USER_AGENT"]
-REDDIT_USERNAME = st.secrets["REDDIT_USERNAME"]
-REDDIT_PASSWORD = st.secrets["REDDIT_PASSWORD"]
-
 MONGO_URI = st.secrets["MONGO_URI"]
 DB_NAME = st.secrets["DB_NAME"]
 COLLECTION_NAME = st.secrets["COLLECTION_NAME"]
 
+def test_connection():
+    try:
+        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)  # Increased timeout to 10 seconds
+        # Trigger server selection to test connectivity
+        client.server_info()
+        st.success("Connected to MongoDB successfully!")
+    except Exception as e:
+        st.error(f"Error connecting to MongoDB: {e}")
+
 def fetch_data():
     try:
-        # Your logic to fetch data from Reddit
-        # Replace this with your actual data fetching logic
-        reddit_auth = requests.auth.HTTPBasicAuth(REDDIT_CLIENT_ID, REDDIT_SECRET)
-        data = {'grant_type': 'password',
-                'username': REDDIT_USERNAME,
-                'password': REDDIT_PASSWORD}
-        headers = {'User-Agent': REDDIT_USER_AGENT}
-        res = requests.post('https://www.reddit.com/api/v1/access_token',
-                            auth=reddit_auth, data=data, headers=headers)
-        token = res.json()['access_token']
-        headers['Authorization'] = f'bearer {token}'
-        
-        # Fetch trending stocks data
-        response = requests.get('https://oauth.reddit.com/r/wallstreetbets/hot',
-                                headers=headers)
-        data = response.json()
-        
-        # Process data and store it in MongoDB
-        client = MongoClient(MONGO_URI)
+        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=10000)  # Increased timeout to 10 seconds
         db = client[DB_NAME]
         collection = db[COLLECTION_NAME]
         
         # Assuming data contains the required information in the correct format
-        collection.insert_many(data['data']['children'])
-
-        # Convert to DataFrame
-        df = pd.DataFrame(data['data']['children'])
+        data = collection.find()
+        df = pd.DataFrame(data)
         return df
-    except requests.exceptions.RequestException as e:
+    except Exception as e:
         st.error(f"Error fetching data: {e}")
         return pd.DataFrame()
 
 def main():
     st.title("Trending Stocks on Reddit")
     st.write("Displaying the trending stocks data fetched from Reddit in the past 24 hours.")
+    
+    # Test connection before fetching data
+    test_connection()
 
     df = fetch_data()
     if df.empty:
