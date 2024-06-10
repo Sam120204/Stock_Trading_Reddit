@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
-from combined_data_preparation import combine_data
+from apewisdom.RAG.combined_data_preparation import combine_data
 
 def train_random_forest():
     data = combine_data()
@@ -12,14 +12,11 @@ def train_random_forest():
     
     # Prepare features and target
     features = ['price', 'volume', 'open', 'high', 'low', 'close', 'sentiment_score']
-    # Assuming you want to predict the next day's closing price
-    # Ensure you have a target column in your data
-    y = data['target']  # Adjust based on your actual target column
-
-    # Ensure you handle any missing values
+    data['target'] = data['close'].shift(-1)  # Predict next day's close price
     data = data.dropna(subset=features + ['target'])
     X = data[features]
-    
+    y = data['target']
+
     # Split the data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 

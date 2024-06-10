@@ -1,8 +1,7 @@
-import streamlit as st
-import os
 import logging
 import traceback
 from datetime import datetime, timedelta
+import streamlit as st
 import pandas as pd
 import plotly.express as px
 from pymongo import MongoClient
@@ -10,11 +9,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import praw
 from apewisdom_client import get_trending_stocks
 
-# Verify that secrets are correctly set
-st.write("Mongo URI:", st.secrets["mongo"]["uri"])
-st.write("Mongo DB Name:", st.secrets["mongo"]["db_name"])
-st.write("Mongo Collection Name:", st.secrets["mongo"]["collection_name"])
-st.write("Reddit Client ID:", st.secrets["reddit"]["client_id"])
 
 # Configure logging
 logging.basicConfig(
@@ -28,46 +22,28 @@ logging.basicConfig(
 
 @st.cache_resource
 def init_mongo_connection():
-    try:
-        client = MongoClient(
-            st.secrets["mongo"]["uri"],
-            tls=True,
-            tlsAllowInvalidCertificates=True
-        )
-        logging.info("MongoDB connection initialized successfully")
-        return client
-    except Exception as e:
-        logging.error("Error initializing MongoDB connection")
-        logging.error(e)
-        logging.error(traceback.format_exc())
-        return None
+    return MongoClient(
+        st.secrets["mongo"]["uri"],
+        tls=True,
+        tlsAllowInvalidCertificates=True
+    )
 
 client = init_mongo_connection()
-db = client[st.secrets["mongo"]["db_name"]] if client else None
+db = client[st.secrets["mongo"]["db_name"]]
 
 @st.cache_resource
 def get_reddit_instance():
-    try:
-        reddit = praw.Reddit(
-            client_id=st.secrets["reddit"]["client_id"],
-            client_secret=st.secrets["reddit"]["client_secret"],
-            user_agent=st.secrets["reddit"]["user_agent"],
-            username=st.secrets["reddit"]["username"],
-            password=st.secrets["reddit"]["password"]
-        )
-        logging.info("Reddit connection initialized successfully")
-        return reddit
-    except Exception as e:
-        logging.error("Error initializing Reddit connection")
-        logging.error(e)
-        logging.error(traceback.format_exc())
-        return None
+    reddit = praw.Reddit(
+        client_id=st.secrets["reddit"]["client_id"],
+        client_secret=st.secrets["reddit"]["client_secret"],
+        user_agent=st.secrets["reddit"]["user_agent"],
+        username=st.secrets["reddit"]["username"],
+        password=st.secrets["reddit"]["password"]
+    )
+    return reddit
 
 def fetch_posts_comments(tickers, buy_sell_keywords):
     reddit = get_reddit_instance()
-    if not reddit:
-        return
-
     subreddit = reddit.subreddit('investing')
     cutoff_date = datetime.utcnow() - timedelta(days=1)
     seen_urls = set()
@@ -155,7 +131,6 @@ def main():
     st.title("Trending Stocks on Reddit")
     st.write("Displaying the trending stocks data fetched from Reddit in the past 24 hours.")
 
-    # Fetch the data
     data, fig_mentions, fig_changes = gather_data()
 
     # Define column names
