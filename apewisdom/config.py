@@ -2,20 +2,20 @@ from urllib.parse import quote_plus
 from dotenv import load_dotenv
 import os
 
-REDDIT_CLIENT_ID = 'L5x_OBLY_HG9UxgxfOg69Q'
-REDDIT_SECRET = '3f2igWO4Hdcu404B3KxVV81nE_hnsA'
-REDDIT_USER_AGENT = 'python:StockPredictionApp:v1.0 (by /u/Stock_prediction)'
-REDDIT_USERNAME = 'Stock_prediction'
-REDDIT_PASSWORD = 'curry666666'
+load_dotenv()
 
-# Properly encode the username and password
-username = quote_plus('zhongjiayou1204')
-password = quote_plus('Zjy2022@00')
+REDDIT_CLIENT_ID = os.getenv('REDDIT_CLIENT_ID')
+REDDIT_SECRET = os.getenv('REDDIT_SECRET')
+REDDIT_USER_AGENT = os.getenv('REDDIT_USER_AGENT')
+REDDIT_USERNAME = os.getenv('REDDIT_USERNAME')
+REDDIT_PASSWORD = os.getenv('REDDIT_PASSWORD')
 
-# Construct the MongoDB URI with TLS parameters
+username = quote_plus(os.getenv('MONGO_USERNAME'))
+password = quote_plus(os.getenv('MONGO_PASSWORD'))
 MONGO_URI = f"mongodb+srv://{username}:{password}@trendsage.svfhdvw.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true"
 
-DB_NAME = "stock_trends"
-COLLECTION_NAME = "trending_stocks"
+DB_NAME = os.getenv('DB_NAME')
+COLLECTION_NAME = os.getenv('COLLECTION_NAME')
 
-NEWSAPI_KEY = '7f36230ffc9a4508a8509a84404ba110'
+NEWSAPI_KEY = os.getenv('NEWSAPI_KEY')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
