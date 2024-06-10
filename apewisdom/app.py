@@ -1,3 +1,4 @@
+# app.py
 import logging
 import traceback
 from datetime import datetime, timedelta
@@ -8,12 +9,15 @@ from pymongo import MongoClient
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import praw
 from apewisdom_client import get_trending_stocks
-
+from fetch_articles_for_tickers import fetch_articles_for_tickers
+from combine_and_store import compare_and_store_prices
+from gpt_analysis import analyze_correlation
+from real_time_stock import update_real_time_prices, save_real_time_prices_to_mongo
 
 # Configure logging
 logging.basicConfig(
     level=logging.DEBUG,
-    format='%(asctime)s %(levelname)s %(message)s',
+    format='%(asctime)s %(levellevel)s %(message)s',
     handlers=[
         logging.FileHandler("streamlit_app.log"),
         logging.StreamHandler()
@@ -117,21 +121,37 @@ def gather_data():
         db[st.secrets["mongo"]["collection_name"]].insert_many(trending_stocks)
         logging.info("Data inserted into the database successfully.")
 
+        # Fetch articles for each ticker
+        articles = fetch_articles_for_tickers()
+
+        # Fetch posts and comments with sentiment analysis
+        fetch_posts_comments(tickers_stocks, buy_sell_keywords)
+
+        # Update real-time prices and save to MongoDB
+        real_time_prices = update_real_time_prices()
+        save_real_time_prices_to_mongo(real_time_prices)
+
+        # Combine and compare prices, then store in MongoDB
+        combined_data = compare_and_store_prices()
+
+        # Analyze correlation with GPT
+        correlation_analysis = analyze_correlation(combined_data.to_dict())
+
         data = display_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
         fig_mentions, fig_changes = visualize_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
         logging.info(f"Data for display: {data}")
-        return data, fig_mentions, fig_changes
+        return data, fig_mentions, fig_changes, correlation_analysis
     except Exception as e:
         logging.error("Error in gather_data function")
         logging.error(e)
         logging.error(traceback.format_exc())
-        return [], None, None
+        return [], None, None, ""
 
 def main():
     st.title("Trending Stocks on Reddit")
     st.write("Displaying the trending stocks data fetched from Reddit in the past 24 hours.")
 
-    data, fig_mentions, fig_changes = gather_data()
+    data, fig_mentions, fig_changes, correlation_analysis = gather_data()
 
     # Define column names
     columns = ["Rank", "Ticker", "Name", "Mentions", "24h Change (%)"]
@@ -150,6 +170,11 @@ def main():
 
     if fig_changes:
         st.plotly_chart(fig_changes)
+
+    # Display GPT analysis
+    if correlation_analysis:
+        st.subheader("GPT Analysis of Correlation")
+        st.write(correlation_analysis)
 
 if __name__ == "__main__":
     main()

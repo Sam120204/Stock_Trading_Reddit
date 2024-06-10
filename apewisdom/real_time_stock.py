@@ -3,6 +3,7 @@ import yfinance as yf
 import pandas as pd
 from pymongo import MongoClient
 import config
+import time
 
 def get_real_time_stock_price(ticker):
     stock = yf.Ticker(ticker)
@@ -49,8 +50,12 @@ def save_real_time_prices_to_mongo(prices_df):
     records = prices_df.to_dict('records')
     collection.insert_many(records)
 
-# Example usage
+def main():
+    while True:
+        real_time_prices = update_real_time_prices()
+        print(real_time_prices)
+        save_real_time_prices_to_mongo(real_time_prices)
+        time.sleep(1800)  # Sleep for 30 minutes before the next update
+
 if __name__ == "__main__":
-    real_time_prices = update_real_time_prices()
-    print(real_time_prices)
-    save_real_time_prices_to_mongo(real_time_prices)
+    main()

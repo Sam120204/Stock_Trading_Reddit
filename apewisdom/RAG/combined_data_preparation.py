@@ -2,7 +2,7 @@
 import pandas as pd
 from pymongo import MongoClient
 from real_time_stock import update_real_time_prices
-from gpt_sentiment import analyze_sentiment
+from gpt_sentiment_analysis import analyze_sentiment
 import config
 
 def fetch_sentiment_data():
