@@ -15,3 +15,5 @@ MONGO_URI = f"mongodb+srv://{username}:{password}@trendsage.svfhdvw.mongodb.net/
 
 DB_NAME = "stock_trends"
 COLLECTION_NAME = "trending_stocks"
+
+NEWSAPI_KEY = '7f36230ffc9a4508a8509a84404ba110'
