@@ -1,4 +1,6 @@
 from urllib.parse import quote_plus
+from dotenv import load_dotenv
+import os
 
 REDDIT_CLIENT_ID = 'L5x_OBLY_HG9UxgxfOg69Q'
 REDDIT_SECRET = '3f2igWO4Hdcu404B3KxVV81nE_hnsA'
