@@ -1,4 +1,4 @@
 apewisdom/venv/
 # Ignore secrets.toml for Streamlit
 .streamlit/secrets.toml
-apewisdom/config.py
+apewisdom/.env
