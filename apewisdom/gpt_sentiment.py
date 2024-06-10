@@ -10,7 +10,7 @@ def analyze_sentiment(text):
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": f"Analyze the sentiment of the following text:\n{text}\nSentiment:"}
-    ***REMOVED***,
+        ],
         max_tokens=60
     )
     sentiment = response.choices[0].message['content'].strip()
