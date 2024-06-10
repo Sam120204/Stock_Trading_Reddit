@@ -17,7 +17,7 @@ logging.basicConfig(
     handlers=[
         logging.FileHandler("streamlit_app.log"),
         logging.StreamHandler()
-***REMOVED***
+    ]
 )
 
 @st.cache_resource
