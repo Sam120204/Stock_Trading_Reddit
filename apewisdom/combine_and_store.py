@@ -1,41 +1,28 @@
-# combine_and_store.py
+# Import necessary libraries
+import requests
 import pandas as pd
-from pymongo import MongoClient
-import config
 
-def fetch_trending_data():
-    client = MongoClient(config.MONGO_URI)
-    db = client[config.DB_NAME]
-    collection = db[config.COLLECTION_NAME]
-    trending_data = list(collection.find())
-    return pd.DataFrame(trending_data)
+# Fetch trending stocks
+def fetch_trending_stocks():
+    response = requests.get('https://apewisdom.io/api/v1.0/filter/all-stocks/page/1')
+    if response.status_code == 200:
+        return response.json()['results']
+    else:
+        return []
 
-def fetch_real_time_prices():
-    client = MongoClient(config.MONGO_URI)
-    db = client[config.DB_NAME]
-    collection = db['real_time_prices']
-    real_time_data = list(collection.find())
-    return pd.DataFrame(real_time_data)
+# Fetch real-time prices for these stocks (mock example, replace with real API)
+def fetch_real_time_prices(tickers):
+    prices = {}
+    for ticker in tickers:
+        prices[ticker] = {"price": 100, "open": 98, "high": 102, "low": 97, "close": 99}  # Mock data
+    return prices
 
-def compare_and_store_prices():
-    trending_data = fetch_trending_data()
-    real_time_data = fetch_real_time_prices()
-    
-    # Merge data on ticker
-    combined_data = pd.merge(trending_data, real_time_data, on='ticker', suffixes=('_trending', '_real_time'))
-    
-    # Calculate price changes
-    combined_data['price_change'] = (combined_data['price_real_time'] - combined_data['price_trending']) / combined_data['price_trending'] * 100
-    
-    # Store combined data in MongoDB
-    client = MongoClient(config.MONGO_URI)
-    db = client[config.DB_NAME]
-    collection = db['combined_data']
-    collection.insert_many(combined_data.to_dict('records'))
-    
+# Combine trending stocks and real-time prices
+def get_combined_data():
+    trending_stocks = fetch_trending_stocks()
+    tickers = [stock['ticker'] for stock in trending_stocks]
+    prices = fetch_real_time_prices(tickers)
+    combined_data = pd.DataFrame(trending_stocks)
+    price_data = pd.DataFrame(prices).T
+    combined_data = combined_data.merge(price_data, left_on='ticker', right_index=True)
     return combined_data
-
-# Example usage
-if __name__ == "__main__":
-    combined_data = compare_and_store_prices()
-    print(combined_data)

@@ -1,4 +1,3 @@
-# app.py
 import logging
 import traceback
 from datetime import datetime, timedelta
@@ -6,23 +5,22 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from pymongo import MongoClient
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import praw
 from apewisdom_client import get_trending_stocks
-from fetch_articles_for_tickers import fetch_articles_for_tickers
-from combine_and_store import compare_and_store_prices
-from gpt_analysis import analyze_correlation
 from real_time_stock import update_real_time_prices, save_real_time_prices_to_mongo
+from chatbot import StockChatBot
 
 # Configure logging
 logging.basicConfig(
     level=logging.DEBUG,
-    format='%(asctime)s %(levellevel)s %(message)s',
+    format='%(asctime)s %(levelname)s %(message)s',
     handlers=[
         logging.FileHandler("streamlit_app.log"),
         logging.StreamHandler()
     ]
 )
+
+st.set_page_config(page_title="TrendSage", layout="wide")
 
 @st.cache_resource
 def init_mongo_connection():
@@ -46,135 +44,130 @@ def get_reddit_instance():
     )
     return reddit
 
-def fetch_posts_comments(tickers, buy_sell_keywords):
-    reddit = get_reddit_instance()
-    subreddit = reddit.subreddit('investing')
-    cutoff_date = datetime.utcnow() - timedelta(days=1)
-    seen_urls = set()
+@st.cache_data(ttl=3600)
+def fetch_historical_mentions(tickers, days=30):
+    historical_mentions = {}
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=30)
+    for ticker in tickers:
+        mentions = list(db['trending_stocks'].find(
+            {"ticker": ticker, "fetch_date": {"$gte": start_date, "$lte": end_date}},
+            {"mentions": 1, "fetch_date": 1}
+        ))
+        if mentions:
+            historical_mentions[ticker] = sorted(mentions, key=lambda x: x['fetch_date'])
+    return historical_mentions
 
-    def fetch_posts(ticker):
-        results = []
-        query = f"{ticker} ({' OR '.join(buy_sell_keywords)})"
-        for submission in subreddit.search(query, limit=50):
-            submission_date = datetime.utcfromtimestamp(submission.created_utc)
-            if submission_date >= cutoff_date and submission.url not in seen_urls:
-                if any(keyword in submission.title.lower() for keyword in buy_sell_keywords):
-                    results.append((submission.title, submission.url, submission_date))
-                    seen_urls.add(submission.url)
-        return results
+def compute_trend(mentions):
+    return [mention['mentions'] for mention in mentions]
 
-    def fetch_comments():
-        results = []
-        for comment in subreddit.comments(limit=1000):
-            comment_date = datetime.utcfromtimestamp(comment.created_utc)
-            comment_url = f"https://www.reddit.com{comment.permalink}"
-            if comment_date >= cutoff_date and comment_url not in seen_urls:
-                if any(ticker in comment.body for ticker in tickers):
-                    if any(keyword in comment.body.lower() for keyword in buy_sell_keywords):
-                        results.append((comment.body, comment_url, comment_date))
-                        seen_urls.add(comment_url)
-        return results
-
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(fetch_posts, ticker) for ticker in tickers]
-        for future in as_completed(futures):
-            for title, url, date in future.result():
-                logging.info(f"Title: {title}\nURL: {url}\nDate: {date}\n")
-
-    for body, url, date in fetch_comments():
-        logging.info(f"Comment: {body}\nURL: {url}\nDate: {date}\n")
-
-def display_trending_items(items, title):
-    logging.info(f"\n{title}")
-    logging.info(f"{'Rank':<5}{'Ticker':<10}{'Name':<30}{'Mentions':<10}{'24h Change (%)':<15}")
-    logging.info("="*70)
-    data = []
-    for i, item in enumerate(items, start=1):
-        mentions = item['mentions']
-        mentions_24h_ago = item.get('mentions_24h_ago', 0)
-        change_24h = (mentions - mentions_24h_ago) / mentions_24h_ago * 100 if mentions_24h_ago else 0
-        data.append([i, item['ticker'], item['name'], mentions, change_24h])
-        logging.info(f"{i:<5}{item['ticker']:<10}{item['name']:<30}{mentions:<10}{change_24h:<15.2f}")
-    return data
-
-def visualize_trending_items(items, title):
-    tickers = [item['ticker'] for item in items]
-    mentions = [item['mentions'] for item in items]
-    changes = [(item['mentions'] - item.get('mentions_24h_ago', 0)) / item.get('mentions_24h_ago', 0) * 100 if item.get('mentions_24h_ago', 0) else 0 for item in items]
-
-    fig_mentions = px.bar(x=tickers, y=mentions, labels={'x': 'Ticker', 'y': 'Mentions'}, title=f'{title} - Mentions')
-    fig_changes = px.bar(x=tickers, y=changes, labels={'x': 'Ticker', 'y': '24h Change (%)'}, title=f'{title} - 24h Change (%)')
-
-    return fig_mentions, fig_changes
-
+@st.cache_data(ttl=3600)
 def gather_data():
     try:
-        buy_sell_keywords = ['buy', 'sell', 'purchase', 'short', 'long', 'hold', 'trade']
-        trending_stocks = get_trending_stocks(filter='all-stocks')
-        logging.info(f"Trending stocks fetched: {trending_stocks}")
+        trending_stocks = []
+        for page in range(1, 2):  # Fetch 6 pages of trending stocks
+            trending_stocks.extend(get_trending_stocks(filter='all-stocks', page=page))
+        
+        logging.info(f"Trending stocks fetched: {len(trending_stocks)}")
         tickers_stocks = [stock['ticker'] for stock in trending_stocks]
 
         for stock in trending_stocks:
             stock["fetch_date"] = datetime.utcnow()
 
-        # Insert data into MongoDB
         db[st.secrets["mongo"]["collection_name"]].insert_many(trending_stocks)
         logging.info("Data inserted into the database successfully.")
 
-        # Fetch articles for each ticker
-        articles = fetch_articles_for_tickers()
-
-        # Fetch posts and comments with sentiment analysis
-        fetch_posts_comments(tickers_stocks, buy_sell_keywords)
-
-        # Update real-time prices and save to MongoDB
         real_time_prices = update_real_time_prices()
         save_real_time_prices_to_mongo(real_time_prices)
 
-        # Combine and compare prices, then store in MongoDB
-        combined_data = compare_and_store_prices()
+        combined_data = pd.merge(pd.DataFrame(trending_stocks), real_time_prices, on='ticker', suffixes=('_trending', '_real_time'))
 
-        # Analyze correlation with GPT
-        correlation_analysis = analyze_correlation(combined_data.to_dict())
+        historical_mentions = fetch_historical_mentions(tickers_stocks)
+        combined_data['trend'] = combined_data['ticker'].apply(lambda x: compute_trend(historical_mentions.get(x, [])))
 
-        data = display_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
-        fig_mentions, fig_changes = visualize_trending_items(trending_stocks, "Trending Stocks on Reddit in the past 24 hours")
-        logging.info(f"Data for display: {data}")
-        return data, fig_mentions, fig_changes, correlation_analysis
+        data = {
+            "trending_stocks": trending_stocks,
+            "real_time_prices": real_time_prices,
+            "combined_data": combined_data
+        }
+
+        logging.info("Data gathering completed successfully.")
+        return data
     except Exception as e:
         logging.error("Error in gather_data function")
         logging.error(e)
         logging.error(traceback.format_exc())
-        return [], None, None, ""
+        return None
 
-def main():
-    st.title("Trending Stocks on Reddit")
-    st.write("Displaying the trending stocks data fetched from Reddit in the past 24 hours.")
+def display_chatbot():
+    st.title("TrendSage")
 
-    data, fig_mentions, fig_changes, correlation_analysis = gather_data()
+    if "data" not in st.session_state:
+        st.session_state.data = gather_data()
 
-    # Define column names
-    columns = ["Rank", "Ticker", "Name", "Mentions", "24h Change (%)"]
+    data = st.session_state.data
 
-    # Display data in a table
     if data:
-        df = pd.DataFrame(data, columns=columns)
-        df.set_index('Rank', inplace=True)
-        st.table(df)
-    else:
-        st.write("No data available.")
+        combined_data = data["combined_data"]
+        columns = ["rank", "ticker", "name", "mentions", "rank_24h_ago", "mentions_24h_ago", "price", "volume", "trend"]
+        df = pd.DataFrame(combined_data, columns=columns)
 
-    # Display the visualizations using Plotly
-    if fig_mentions:
+        df.set_index('rank', inplace=True)
+
+        st.dataframe(
+            df,
+            column_config={
+                "trend": st.column_config.AreaChartColumn(
+                    label="Trend (30 days)",
+                    width="medium",
+                    help="The trend of mentions in the last 30 days",
+                    y_min=0,
+                    y_max=max(df["mentions"])
+                )
+            },
+            hide_index=True
+        )
+
+        top_20_df = df.head(20)
+        top_30_df = df.nlargest(30, 'mentions_24h_ago')
+
+        fig_mentions = px.bar(top_20_df, x='ticker', y='mentions', title='Top 20 Mentions')
+        fig_mentions.update_layout(
+            autosize=False,
+            width=800,  # Adjust the width as needed
+            height=400,  # Adjust the height as needed
+        )
+        fig_changes = px.bar(top_30_df, x='ticker', y='mentions_24h_ago', title='Top 30 24h Change (%)')
+        fig_changes.update_layout(
+            autosize=False,
+            width=800,  # Adjust the width as needed
+            height=400,  # Adjust the height as needed
+        )
         st.plotly_chart(fig_mentions)
-
-    if fig_changes:
         st.plotly_chart(fig_changes)
 
-    # Display GPT analysis
-    if correlation_analysis:
-        st.subheader("GPT Analysis of Correlation")
-        st.write(correlation_analysis)
+        if "chat_history" not in st.session_state:
+            st.session_state.chat_history = []
+
+        if "stock_bot" not in st.session_state:
+            st.session_state.stock_bot = StockChatBot(combined_data)
+
+        st.subheader("Stock Data Analysis Chatbot")
+        message_placeholder = st.empty()
+
+        with st.container():
+            st.write('<div class="centered-content">', unsafe_allow_html=True)
+            user_input = st.chat_input("Ask a question about the data:", key="user_input")
+            st.write('</div>', unsafe_allow_html=True)
+
+            if user_input:
+                response = st.session_state.stock_bot.query(user_input, st.session_state.chat_history)
+                st.session_state.chat_history.append({"role": "user", "content": user_input})
+                st.session_state.chat_history.append({"role": "assistant", "content": response})
+
+        for chat in st.session_state.chat_history:
+            with st.chat_message(chat["role"]):
+                st.markdown(chat["content"])
 
 if __name__ == "__main__":
-    main()
+    display_chatbot()
