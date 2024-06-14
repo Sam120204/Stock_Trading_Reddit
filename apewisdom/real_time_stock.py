@@ -1,4 +1,3 @@
-# real_time_stock.py
 import yfinance as yf
 import pandas as pd
 from pymongo import MongoClient
@@ -28,7 +27,6 @@ def fetch_tickers_from_mongo():
     db = client[config.DB_NAME]
     collection = db[config.COLLECTION_NAME]
     tickers = collection.distinct('ticker')
-    print(f"Fetched {len(tickers)} unique tickers from MongoDB")
     return tickers
 
 def update_real_time_prices():
@@ -46,16 +44,15 @@ def update_real_time_prices():
 def save_real_time_prices_to_mongo(prices_df):
     client = MongoClient(config.MONGO_URI)
     db = client[config.DB_NAME]
-    collection = db['real_time_prices']  # Create a new collection for real-time prices
+    collection = db['real_time_prices']
     records = prices_df.to_dict('records')
     collection.insert_many(records)
 
 def main():
     while True:
         real_time_prices = update_real_time_prices()
-        print(real_time_prices)
         save_real_time_prices_to_mongo(real_time_prices)
-        time.sleep(1800)  # Sleep for 30 minutes before the next update
+        time.sleep(1800)
 
 if __name__ == "__main__":
     main()

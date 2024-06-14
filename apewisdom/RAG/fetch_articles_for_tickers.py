@@ -1,5 +1,5 @@
 # fetch_articles_for_tickers.py
-from fetch_tickers import fetch_tickers_from_mongo
+from apewisdom.Discarded.fetch_tickers import fetch_tickers_from_mongo
 from apewisdom.RAG.fetch_articles import fetch_articles
 import logging
 
