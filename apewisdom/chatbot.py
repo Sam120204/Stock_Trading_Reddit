@@ -1,11 +1,13 @@
 import openai
 from dotenv import load_dotenv
 import os
+import config
 
 # Load environment variables
 load_dotenv()
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Set the OpenAI API key from config
+openai.api_key = config.OPENAI_API_KEY
 
 SYSTEM_MESSAGE_PROMPT = """
 You are a chat bot named TrendSage, a help agent for stock market analysis. You provide insights and answer questions regarding stock trends based on the provided dataset. You have access to the latest stock trends and real-time price data.
@@ -19,7 +21,6 @@ You are able to answer the following types of user questions:
 
 Any question that isn't about stock trends or market analysis should not be answered. If a user asks a question that isn't about stocks, you should tell them that you aren't able to help them with their query. Keep your answers concise, and shorter than 5 sentences.
 """
-                        
 
 class StockChatBot:
     """
