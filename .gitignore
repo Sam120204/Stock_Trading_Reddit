@@ -2,3 +2,5 @@ apewisdom/venv/
 # Ignore secrets.toml for Streamlit
 apewisdom/.streamlit/secrets.toml
 apewisdom/.env
+.idea/
+venv/
