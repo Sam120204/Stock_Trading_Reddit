@@ -9,6 +9,7 @@ import praw
 from apewisdom_client import get_trending_stocks
 from real_time_stock import update_real_time_prices, save_real_time_prices_to_mongo
 from chatbot import StockChatBot
+import plotly.graph_objects as go
 
 # Configure logging
 logging.basicConfig(
@@ -22,6 +23,7 @@ logging.basicConfig(
 
 st.set_page_config(page_title="TrendSage", layout="wide")
 
+
 @st.cache_resource
 def init_mongo_connection():
     return MongoClient(
@@ -30,8 +32,10 @@ def init_mongo_connection():
         tlsAllowInvalidCertificates=True
     )
 
+
 client = init_mongo_connection()
 db = client[st.secrets["mongo"]["db_name"]]
+
 
 @st.cache_resource
 def get_reddit_instance():
@@ -43,6 +47,7 @@ def get_reddit_instance():
         password=st.secrets["reddit"]["password"]
     )
     return reddit
+
 
 @st.cache_data(ttl=3600)
 def fetch_historical_mentions(tickers, days=30):
@@ -58,8 +63,26 @@ def fetch_historical_mentions(tickers, days=30):
             historical_mentions[ticker] = sorted(mentions, key=lambda x: x['fetch_date'])
     return historical_mentions
 
-def compute_trend(mentions):
-    return [mention['mentions'] for mention in mentions]
+
+@st.cache_data(ttl=3600)
+def fetch_historical_prices(tickers, days=30):
+    historical_prices = {}
+    end_date = datetime.utcnow()
+    start_date = end_date - timedelta(days=30)
+    for ticker in tickers:
+        prices = list(db['real_time_prices'].find(
+            {"ticker": ticker, "date": {"$gte": start_date, "$lte": end_date}},
+            {"price": 1, "date": 1}
+        ))
+        if prices:
+            historical_prices[ticker] = sorted(prices, key=lambda x: x['date'])
+    return historical_prices
+
+
+def compute_trend(trend_data):
+    print(trend_data)
+    return [(item['mentions'] if ('mentions' in item) else item['price']) for item in trend_data]
+
 
 @st.cache_data(ttl=3600)
 def gather_data():
@@ -67,7 +90,7 @@ def gather_data():
         trending_stocks = []
         for page in range(1, 2):  # Fetch 6 pages of trending stocks
             trending_stocks.extend(get_trending_stocks(filter='all-stocks', page=page))
-        
+
         logging.info(f"Trending stocks fetched: {len(trending_stocks)}")
         tickers_stocks = [stock['ticker'] for stock in trending_stocks]
 
@@ -80,10 +103,13 @@ def gather_data():
         real_time_prices = update_real_time_prices()
         save_real_time_prices_to_mongo(real_time_prices)
 
-        combined_data = pd.merge(pd.DataFrame(trending_stocks), real_time_prices, on='ticker', suffixes=('_trending', '_real_time'))
+        combined_data = pd.merge(pd.DataFrame(trending_stocks), real_time_prices, on='ticker',
+                                 suffixes=('_trending', '_real_time'))
 
         historical_mentions = fetch_historical_mentions(tickers_stocks)
-        combined_data['trend'] = combined_data['ticker'].apply(lambda x: compute_trend(historical_mentions.get(x, [])))
+        historical_prices = fetch_historical_prices(tickers_stocks)
+        combined_data['mention_trend'] = combined_data['ticker'].apply(lambda x: compute_trend(historical_mentions.get(x, [])))
+        combined_data['price_trend'] = combined_data['ticker'].apply(lambda x: compute_trend(historical_prices.get(x, [])))
 
         data = {
             "trending_stocks": trending_stocks,
@@ -99,6 +125,7 @@ def gather_data():
         logging.error(traceback.format_exc())
         return None
 
+
 def display_chatbot():
     st.title("TrendSage")
 
@@ -109,7 +136,7 @@ def display_chatbot():
 
     if data:
         combined_data = data["combined_data"]
-        columns = ["rank", "ticker", "name", "mentions", "rank_24h_ago", "mentions_24h_ago", "price", "volume", "trend"]
+        columns = ["rank", "ticker", "name", "mentions", "rank_24h_ago", "mentions_24h_ago", "price", "volume", "mention_trend", "price_trend"]
         df = pd.DataFrame(combined_data, columns=columns)
 
         df.set_index('rank', inplace=True)
@@ -117,12 +144,19 @@ def display_chatbot():
         st.dataframe(
             df,
             column_config={
-                "trend": st.column_config.AreaChartColumn(
-                    label="Trend (30 days)",
+                "mention_trend": st.column_config.AreaChartColumn(
+                    label="Mention Trend (30 days)",
                     width="medium",
                     help="The trend of mentions in the last 30 days",
                     y_min=0,
                     y_max=max(df["mentions"])
+                ),
+                "price_trend": st.column_config.AreaChartColumn(
+                    label="Price Trend (30 days)",
+                    width="medium",
+                    help="The trend of prices in the last 30 days",
+                    y_min=0,
+                    y_max=max(df["price"])
                 )
             },
             hide_index=True
@@ -168,6 +202,7 @@ def display_chatbot():
         for chat in st.session_state.chat_history:
             with st.chat_message(chat["role"]):
                 st.markdown(chat["content"])
+
 
 if __name__ == "__main__":
     display_chatbot()
