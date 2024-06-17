@@ -9,7 +9,7 @@ import praw
 from apewisdom_client import get_trending_stocks
 from real_time_stock import update_real_time_prices, save_real_time_prices_to_mongo
 from chatbot import StockChatBot
-import plotly.graph_objects as go
+import plotly.graph_objects as stgo
 
 # Configure logging
 logging.basicConfig(
@@ -52,36 +52,60 @@ def get_reddit_instance():
 @st.cache_data(ttl=3600)
 def fetch_historical_mentions(tickers, days=30):
     historical_mentions = {}
-    end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=30)
+    end_date = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    start_date = end_date - timedelta(days=days-1)
+
     for ticker in tickers:
-        mentions = list(db['trending_stocks'].find(
-            {"ticker": ticker, "fetch_date": {"$gte": start_date, "$lte": end_date}},
-            {"mentions": 1, "fetch_date": 1}
-        ))
-        if mentions:
-            historical_mentions[ticker] = sorted(mentions, key=lambda x: x['fetch_date'])
+        daily_mentions = [None] * 30
+
+        for i in range(30):
+            day = start_date + timedelta(days=i)
+            mentions = list(db['trending_stocks'].find(
+                {"ticker": ticker, "fetch_date": {"$gte": day, "$lte": day + timedelta(days=1)}},
+                {"mentions": 1, "fetch_date": 1}
+            ).sort("fetch_date", 1).limit(1))
+
+            if mentions:
+                daily_mentions[i] = mentions[0]
+
+        historical_mentions[ticker] = daily_mentions
+
     return historical_mentions
 
 
 @st.cache_data(ttl=3600)
 def fetch_historical_prices(tickers, days=30):
     historical_prices = {}
-    end_date = datetime.utcnow()
-    start_date = end_date - timedelta(days=30)
+    end_date = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    start_date = end_date - timedelta(days=days-1)
+
     for ticker in tickers:
-        prices = list(db['real_time_prices'].find(
-            {"ticker": ticker, "date": {"$gte": start_date, "$lte": end_date}},
-            {"price": 1, "date": 1}
-        ))
-        if prices:
-            historical_prices[ticker] = sorted(prices, key=lambda x: x['date'])
+        daily_close_prices = [None] * 30
+
+        for i in range(30):
+            day = start_date + timedelta(days=i)
+
+            # Use Friday's price for Saturday and Sunday
+            if day.weekday() == 6:
+                day = day - timedelta(days=2)
+            elif day.weekday() == 5:
+                day = day - timedelta(days=1)
+
+            prices = list(db['real_time_prices'].find(
+                {"ticker": ticker, "date": {"$gte": day, "$lte": day + timedelta(days=1)}},
+                {"close": 1, "date": 1}
+            ).sort("date", 1).limit(1))
+
+            if prices:
+                daily_close_prices[i] = prices[0]
+
+        historical_prices[ticker] = daily_close_prices
+
     return historical_prices
 
 
 def compute_trend(trend_data):
-    print(trend_data)
-    return [(item['mentions'] if ('mentions' in item) else item['price']) for item in trend_data]
+    return [0 if not item else (item['mentions'] if ('mentions' in item) else item['close']) for item in trend_data]
 
 
 @st.cache_data(ttl=3600)
@@ -106,6 +130,7 @@ def gather_data():
         combined_data = pd.merge(pd.DataFrame(trending_stocks), real_time_prices, on='ticker',
                                  suffixes=('_trending', '_real_time'))
 
+        start_date = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0) - timedelta(days=29)
         historical_mentions = fetch_historical_mentions(tickers_stocks)
         historical_prices = fetch_historical_prices(tickers_stocks)
         combined_data['mention_trend'] = combined_data['ticker'].apply(lambda x: compute_trend(historical_mentions.get(x, [])))
@@ -114,7 +139,8 @@ def gather_data():
         data = {
             "trending_stocks": trending_stocks,
             "real_time_prices": real_time_prices,
-            "combined_data": combined_data
+            "combined_data": combined_data,
+            "trend_period": [start_date + timedelta(days=i) for i in range(30)]
         }
 
         logging.info("Data gathering completed successfully.")
@@ -140,6 +166,33 @@ def display_chatbot():
         df = pd.DataFrame(combined_data, columns=columns)
 
         df.set_index('rank', inplace=True)
+
+        selected_ticker = st.multiselect("Select stocks to display their trend:", df['ticker'].tolist(), default=None)
+
+        if selected_ticker:
+            fig = stgo.Figure()
+
+            for ticker in selected_ticker:
+                fig.add_trace(
+                    stgo.Scatter(x=data['trend_period'],
+                                 y=df[df['ticker'] == ticker]["mention_trend"].tolist()[0],
+                                 name=f"{ticker} Mentions", marker=dict()),
+                )
+
+                fig.add_trace(
+                    stgo.Scatter(x=data['trend_period'],
+                                 y=df[df['ticker'] == ticker]['price_trend'].tolist()[0],
+                                 name=f"{ticker} Price", marker=dict(), yaxis="y2"),
+                )
+
+            fig.update_layout(
+                xaxis=dict(title="Date"),
+                yaxis=dict(title="Mentions", side="left", rangemode="normal"),
+                yaxis2=dict(title="Price", side="right", overlaying="y", rangemode="normal"),
+                title="Stock Price and Mentions Over 30 Days"
+            )
+
+            st.plotly_chart(fig)
 
         st.dataframe(
             df,
