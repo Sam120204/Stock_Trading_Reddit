@@ -8,3 +8,4 @@ __pycache__/
 *.log
 .DS_Store
 *.png
+fetch_real_time_prices_gcloud/venv/
