@@ -10,13 +10,17 @@ transformers>=4.12.3
 spacy>=3.1.2
 vaderSentiment>=3.3.2
 
-# Vector database
-faiss-cpu>=1.7.2
 
 # Additional utilities
 scikit-learn>=1.0.2
 
 # Spacy language model
 spacy==3.7.5
-#then run
+
+pipreqs
+# Installation via Conda Forge
+# Note: faiss-cpu is not available as 'faiss' on Conda Forge
+conda install -c conda-forge faiss-cpu
+
+# then run
 # python -m spacy download en_core_web_sm
