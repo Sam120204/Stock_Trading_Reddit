@@ -1,99 +1,81 @@
-# TrendSage - Stock Prediction Reddit Tool
+# TrendSage - Stock and Crypto Prediction Reddit Tool
 
 ## Overview
 
-TrendSage aims to develop a correlation between stock predictions based on the posts or comments on Reddit and the actual stock trends. The project fetches trending stocks, cryptocurrencies, and 4Chan /biz mentions data from the Apewisdom API and retrieves relevant Reddit posts and comments discussing these assets. This data is used to analyze sentiment and potential market movements.
+TrendSage aims to develop a correlation between stock and cryptocurrency predictions based on the posts or comments on Reddit and the actual market trends. The project consists of three phases, each focusing on different aspects of data collection, analysis, and prediction using social media sentiment. The data is fetched from the Apewisdom API, Reddit, and other sources, and is used to analyze sentiment and potential market movements. 
 
-## Features
+## Phases
 
-- Fetch trending stocks from Apewisdom API
-- Fetch trending cryptocurrencies from Apewisdom API
-- Fetch most mentioned stocks & cryptos on 4Chan /biz from Apewisdom API
-- Retrieve and display Reddit posts and comments related to trending stocks and cryptocurrencies within the last 15 days
-- Calculate and display the 24-hour change in mentions of each stock and cryptocurrency
-- Visualize the data using bar charts for mentions and 24-hour change percentage
-- Implement a machine learning model to predict stock trends based on Reddit data
-- Save data to MongoDB for persistent storage
+### Phase 1: Testing API (testing directory)
 
-## Prerequisites
+**Objective**: Build an API similar to Apewisdom that predicts stock trends based on social media sentiment, particularly from Reddit posts and comments. Develop a stock prediction tool that predicts stock trends based on social media sentiment, particularly from Reddit posts and comments. This involves using the Random Forest Regressor machine learning algorithm to analyze sentiment and other features extracted from social media data.
 
-- Python 3.6 or higher
+**Tools and Technologies**:
+- Python
+- PRAW (Python Reddit API Wrapper) for fetching Reddit data
+- Requests library for making HTTP requests
+- NLTK and VADER for sentiment analysis
+- Scikit-learn for machine learning (Random Forest Regressor)
+- Pandas for data manipulation
+- Matplotlib and Seaborn for data visualization
+
+### Phase 2: Apewisdom API Integration (apewisdom directory)
+
+**Objective**: Use the Apewisdom API to gather trending stock tickers' mentions and store this data in MongoDB. Fetch real-time stock prices based on MongoDB stock ticker names and compare the real trending stock tickers on Reddit posts/comments through Apewisdom with the real-time prices to show their correlation. Integrate GPT-4 for a chatbot that provides information on these stock tickers.
+
+**Tools and Technologies**:
+- Python
 - PRAW (Python Reddit API Wrapper)
 - Requests library
-- Matplotlib
-- Seaborn
-- Pandas
-- Scikit-learn
-- TextBlob (for sentiment analysis)
+- MongoDB (for data storage)
+- Matplotlib and Seaborn (for data visualization)
+- GPT-4 (for chatbot)
+- Streamlit (for frontend)
+- Docker and Google Cloud (for deployment and scheduling)
+
+### Phase 3: Crypto Analysis (crypto directory)
+
+**Objective**: Analyze the correlation between social media sentiment and cryptocurrency prices. Use embeddings (tokenized with BERT and GPT models) to analyze the sentiments of Reddit posts and comments about cryptocurrencies. Store these embeddings in a vector database (FAISS) for future implementation.
+
+**Tools and Technologies**:
+- Python
+- Anaconda (Virtual Environment)
+- PRAW (Python Reddit API Wrapper)
+- Requests library
+- Matplotlib and Seaborn (for data visualization)
+- BERT and GPT models (for embedding and sentiment analysis)
+- FAISS (for vector database storage)
+
+**Subreddits Analyzed**:
+- `bitcoin`
+- `btc`
+- `CryptoCurrency`
+- `BitcoinBeginners`
+- `binance`
+- `coinbase`
+- `CryptoMoonShots`
+- `CryptoMarkets`
+- `CryptoTechnology`
+
+**Next Steps**:
+- Continue training the model to better fit and provide more accurate sentiment scores focused on cryptocurrency discussions.
+- Use embeddings and store this information in the FAISS vector database for future implementation.
+- Use LLM (Large Language Models) to analyze the correlation between social media sentiment and real cryptocurrency prices in detail.
+
+## Installation and Setup Instructions
+
+### Prerequisites
+
+- Python 3.6 or higher
+- Conda (recommended for virtual environment management)
 - MongoDB (for data storage)
 
-## Setup
+### Clone the Repository
 
-1. **Clone the repository**
-    ```sh
-    git clone https://github.com/yourusername/Stock_Trading_Reddit.git
-    cd Stock_Trading_Reddit
-    ```
+```sh
+git clone https://github.com/yourusername/Stock_Trading_Reddit.git
+cd Stock_Trading_Reddit
 
-2. **Install the required libraries**
-    ```sh
-    pip install praw requests matplotlib seaborn
-    ```
-
-3. **Set up Reddit API credentials**
-    Create a `config.py` file in the root directory with the following content:
-    ```python
-    REDDIT_CLIENT_ID = 'your_client_id'
-    REDDIT_SECRET = 'your_client_secret'
-    REDDIT_USER_AGENT = 'your_user_agent'
-    REDDIT_USERNAME = 'your_reddit_username'
-    REDDIT_PASSWORD = 'your_reddit_password'
-    ```
-4. **Set up MongoDB**
-   Make sure MongoDB is installed and running. You can start MongoDB with:
-    ```sh
-    mongod --dbpath <your_db_path>
-    ```
-
-## Usage
-
-1. **Fetch trending stocks, cryptocurrencies, and 4Chan data and display results**
-    ```sh
-    python main.py
-    ```
-
-2. **Fetch posts and comments related to trending stocks and cryptocurrencies**
-    The `main.py` script fetches and displays trending stocks, cryptocurrencies, and 4Chan mentions. It also retrieves and prints relevant Reddit posts and comments discussing these assets within the last 15 days.
-
-3. **Visualize the data**
-    The script will generate bar charts for mentions and 24-hour change percentage for trending stocks, cryptocurrencies, and 4Chan mentions.
-
-## Project Structure
-
-### `apewisdom` Directory
-
-Contains the existing project that predicts the stock profit using Apewisdom API and Reddit Post API.
-
-- `config.py`: Contains Reddit API credentials.
-- `main.py`: Main script to fetch and display trending stocks, cryptocurrencies, 4Chan mentions, and Reddit discussions.
-- `reddit_client.py`: Handles Reddit API connection and data retrieval.
-- `apewisdom_client.py`: Fetches trending stocks, cryptocurrencies, and 4Chan data from Apewisdom API.
-- `README.md`: Project documentation.
-
-### `testing` Directory
-
-Contains the currently developing API that works similar to Apewisdom API.
-
-- `config.py`: Contains Reddit API credentials.
-- `main.py`: Main script to fetch and display trending stocks, cryptocurrencies, 4Chan mentions, Reddit discussions, and to train the machine learning model.
-- `src/data_collection/reddit_client.py`: Handles Reddit API connection and data retrieval.
-- `src/data_collection/apewisdom_client.py`: Fetches trending stocks, cryptocurrencies, and 4Chan data from Apewisdom API.
-- `src/data_preprocessing/preprocessing.py`: Contains functions for data preprocessing and sentiment analysis.
-- `src/feature_engineering/feature_engineering.py`: Contains functions for feature engineering.
-- `src/model_training/training.py`: Contains functions for training and evaluating the machine learning model.
-- `src/database/database.py`: Contains functions for saving data to MongoDB.
-- `requirements.txt`: Lists all the required libraries.
-- `README.md`: Project documentation.
 
 ## Example Output
 
@@ -131,11 +113,14 @@ Rank  Ticker   Name                           Mentions  24h Change (%)
 5     ETH      Ethereum                       300       -5.00           
 ```
 
-## Future Plans
-I am also currently working on developing a web or mobile application to make this tool more accessible and user-friendly. Stay tuned for updates!
-
 ## Contributing
+
 Contributions are welcome! Please fork the repository and submit a pull request for any enhancements or bug fixes.
 
+## License
+
+This project is licensed under the MIT License.
+
 ## Contact
+
 If you have any questions or feedback, feel free to reach out at zhongjiayou1202@gmail.com.

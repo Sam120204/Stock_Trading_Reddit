@@ -58,7 +58,8 @@ def fetch_posts_and_comments(reddit, subreddits, limit=100):
                     'body': post.selftext,
                     'score': post.score,
                     'created_utc': post.created_utc,
-                    'comments': executor.submit(fetch_comments, post).result()
+                    'comments': executor.submit(fetch_comments, post).result(),
+                    'url': post.url
                 }
                 results.append(post_data)
 
