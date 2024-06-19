@@ -73,7 +73,7 @@ TrendSage aims to develop a correlation between stock and cryptocurrency predict
 ### Clone the Repository
 
 ```sh
-git clone https://github.com/yourusername/Stock_Trading_Reddit.git
+git clone https://github.com/Sam120204/Stock_Trading_Reddit.git
 cd Stock_Trading_Reddit
 ```
 
