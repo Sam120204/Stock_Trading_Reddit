@@ -3,6 +3,10 @@ import pandas as pd
 from pymongo import MongoClient
 import config
 import logging
+import warnings
+
+warnings.filterwarnings("ignore", category=FutureWarning)
+
 
 def get_real_time_stock_price(ticker):
     stock = yf.Ticker(ticker)

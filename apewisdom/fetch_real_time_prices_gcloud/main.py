@@ -14,3 +14,11 @@ def fetch_real_time_prices(request):
         logging.error(e)
         return "Error fetching and storing data", 500
 
+
+def main():
+    real_time_prices = real_time_stock.update_real_time_prices()
+    real_time_stock.save_real_time_prices_to_mongo(real_time_prices)
+
+
+if __name__ == "__main__":
+    main()
