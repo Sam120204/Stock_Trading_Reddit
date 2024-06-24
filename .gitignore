@@ -12,3 +12,4 @@ apewisdom/.env
 apewisdom/fetch_real_time_prices_gcloud/venv
 .idea/
 venv/
+stock/lambda_function.zip
