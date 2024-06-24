@@ -10,6 +10,8 @@ crypto/__pycache__/
 apewisdom/.streamlit/secrets.toml
 apewisdom/.env
 apewisdom/fetch_real_time_prices_gcloud/venv
+apewisdom/fetch_real_time_prices_gcloud/config.py
+apewisdom/fetch_trending_stocks_gcloud/config.py
 .idea/
 venv/
 stock/lambda_function.zip
