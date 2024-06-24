@@ -6,11 +6,9 @@ REDDIT_USER_AGENT = 'python:StockPredictionApp:v1.0 (by /u/Stock_prediction)'
 REDDIT_USERNAME = 'Stock_prediction'
 REDDIT_PASSWORD = 'curry666666'
 
-# Properly encode the username and password
 username = quote_plus('zhongjiayou1204')
 password = quote_plus('Zjy2022@00')
 
-# Construct the MongoDB URI with TLS parameters
 MONGO_URI = f"mongodb+srv://{username}:{password}@trendsage.svfhdvw.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true"
 
 DB_NAME = "stock_trends"
