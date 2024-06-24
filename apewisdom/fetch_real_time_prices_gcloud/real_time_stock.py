@@ -1,11 +1,34 @@
 import yfinance as yf
 import pandas as pd
 from pymongo import MongoClient
+import datetime
+import pytz
 import config
 import logging
 import warnings
 
 warnings.filterwarnings("ignore", category=FutureWarning)
+
+def round_to_nearest_half_hour(dt):
+    minutes = dt.minute
+    if minutes < 15:
+        delta = datetime.timedelta(minutes=-minutes)
+    elif minutes < 45:
+        delta = datetime.timedelta(minutes=30 - minutes)
+    else:
+        delta = datetime.timedelta(minutes=60 - minutes)
+    return (dt + delta).replace(second=0, microsecond=0)
+
+
+def convert_to_edt(dt):
+    utc_zone = pytz.utc
+    edt_zone = pytz.timezone('US/Eastern')
+
+    dt_utc = utc_zone.localize(dt)
+
+    dt_edt = dt_utc.astimezone(edt_zone)
+
+    return dt_edt
 
 
 def get_real_time_stock_price(ticker):
@@ -20,7 +43,7 @@ def get_real_time_stock_price(ticker):
             'high': data['High'][0],
             'low': data['Low'][0],
             'close': data['Close'][0],
-            'date': data.index[0]
+            'date': convert_to_edt(round_to_nearest_half_hour(datetime.datetime.utcnow()))
         }
         return price_data
     else:
