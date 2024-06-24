@@ -1,4 +1,8 @@
 apewisdom/venv/
+stock/venv/
+stock/.streamlit/secrets.toml
+stock/__pycache__/
+stock/lambda_function
 crypto/venv/
 crypto/.streamlit/secrets.toml
 crypto/__pycache__/
