@@ -1,12 +1,14 @@
 apewisdom/venv/
 stock/venv/
+stock/.env
 stock/.streamlit/secrets.toml
 stock/__pycache__/
 stock/lambda_function
+stock/lambda_function.zip
+stock/fetch_store_stock_prices_gcloud/.env
 crypto/venv/
 crypto/.streamlit/secrets.toml
 crypto/__pycache__/
-# Ignore secrets.toml for Streamlit
 apewisdom/.streamlit/secrets.toml
 apewisdom/.env
 apewisdom/fetch_real_time_prices_gcloud/venv
@@ -14,4 +16,3 @@ apewisdom/fetch_real_time_prices_gcloud/config.py
 apewisdom/fetch_trending_stocks_gcloud/config.py
 .idea/
 venv/
-stock/lambda_function.zip
