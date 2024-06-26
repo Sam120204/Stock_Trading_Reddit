@@ -13,8 +13,6 @@ def setup_reddit_api():
 
     reddit = praw.Reddit(client_id=client_id, client_secret=client_secret, user_agent=user_agent, username=username, password=password)
     return reddit
-
-# Function to fetch comments for a post
 def fetch_comments(post):
     post.comments.replace_more(limit=0)  # Remove the "load more comments" option
     comments_data = []
@@ -23,8 +21,8 @@ def fetch_comments(post):
             continue
         comment_data = {
             'body': comment.body,
+            'created_utc': datetime.utcfromtimestamp(comment.created_utc),
             'score': comment.score,
-            'created_utc': comment.created_utc,
             'replies': []
         }
         for reply in comment.replies:
@@ -32,8 +30,8 @@ def fetch_comments(post):
                 continue
             reply_data = {
                 'body': reply.body,
-                'score': reply.score,
-                'created_utc': reply.created_utc
+                'created_utc': datetime.utcfromtimestamp(reply.created_utc),
+                'score': reply.score
             }
             comment_data['replies'].append(reply_data)
         comments_data.append(comment_data)
@@ -56,8 +54,8 @@ def fetch_posts_and_comments(reddit, subreddits, limit=100):
                 post_data = {
                     'title': post.title,
                     'body': post.selftext,
+                    'created_utc': datetime.utcfromtimestamp(post.created_utc),
                     'score': post.score,
-                    'created_utc': post.created_utc,
                     'comments': executor.submit(fetch_comments, post).result(),
                     'url': post.url
                 }
@@ -73,7 +71,6 @@ def get_reddit_data(limit=100):
         'stocks',
         'pennystocks',
         'StockMarket',
-        'wallstreetbets',
         'EducatedInvesting',
         'Wallstreetbetsnew'
     ]
