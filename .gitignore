@@ -16,3 +16,7 @@ apewisdom/fetch_real_time_prices_gcloud/config.py
 apewisdom/fetch_trending_stocks_gcloud/config.py
 .idea/
 venv/
+stock/fetch_reddit_post_comment/.env
+stock/fetch_reddit_post_comment/venv
+stock/fetch_reddit_post_comment/__pycache__/
+__pycache__/
