@@ -33,9 +33,9 @@ TrendSage aims to develop a correlation between stock and cryptocurrency predict
 - Streamlit (for frontend)
 - Docker and Google Cloud (for deployment and scheduling)
 
-### Phase 3: Crypto Analysis (crypto directory)
+### Phase 3: Stock/Crypto Analysis (stock/crypto directories)
 
-**Objective**: Analyze the correlation between social media sentiment and cryptocurrency prices. Use embeddings (tokenized with BERT and GPT models) to analyze the sentiments of Reddit posts and comments about cryptocurrencies. Store these embeddings in a vector database (FAISS) for future implementation.
+**Objective**: Analyze the correlation between social media sentiment and stock/cryptocurrency prices. Use embeddings (tokenized with BERT and GPT models) to analyze the sentiments of Reddit posts and comments about cryptocurrencies. Store these embeddings in a vector database (FAISS) for future implementation.
 
 **Tools and Technologies**:
 - Python
@@ -47,6 +47,12 @@ TrendSage aims to develop a correlation between stock and cryptocurrency predict
 - FAISS (for vector database storage)
 
 **Subreddits Analyzed**:
+- `wallstreetbets`
+- `stocks`
+- `pennystocks`
+- `StockMarket`
+- `EducatedInvesting`
+- `Wallstreetbetsnew`
 - `bitcoin`
 - `btc`
 - `CryptoCurrency`
