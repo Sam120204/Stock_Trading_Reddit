@@ -1,6 +1,7 @@
 from openai import OpenAI
 import os
 import dotenv
+import time
 from data_collection import get_reddit_data
 
 # Load environment variables
@@ -17,13 +18,14 @@ def analyze_sentiment(text):
                 {
                     "role": "user",
                     "content": 
-                               f"Analyze the overall sentiment score of the following Reddit post. "
-                                f"Consider the title, body, comments, and especially their scores (upvotes-downvotes by viewers) as indicators of the sentiment. "
-                                f"You should just tell me a score number between -100 and 100 without any further explanation and "
-                                f"A score of -100 means that the viewers significantly disagree with the post, considering it to be very negative or misleading (like a 'shit post' about this stock ticker). "
-                                f"A score of 0 means that the viewers keeps nuturel with the post, considering it neither postive nor negative about this stock ticker. "
-                                f"A score of 100 means that the viewers significantly agree with the post, finding it very positive or accurate (everyone feels the post is right in its opinion on this stock ticker).\n\n"
-                                f"{text}"
+                               f"Analyze the overall sentiment of the following Reddit post and its comments regarding the mentioned stock ticker or company. "
+                               f"Consider the title, body, comments, and especially their scores (upvotes-downvotes by viewers) as indicators of the sentiment. "
+                               f"Focus on the general sentiment about the stock ticker or company discussed in the post considering whole posts and comments with scores, rather than individual agreement or disagreement with specific comments. "
+                               f"You should just tell me a sentiment score between -1 and 1 without any further explanation. "
+                               f"A score of -1 means that the sentiment towards the stock ticker or company is very negative, indicating that the general view is pessimistic or bearish. "
+                               f"A score of 0 means that the sentiment is neutral, indicating that the general view is neither positive nor negative. "
+                               f"A score of 1 means that the sentiment is very positive, indicating that the general view is optimistic or bullish.\n\n"
+                               f"{text}"
                 }
             ],
             stream=True,
@@ -52,8 +54,14 @@ def analyze_post_sentiment(post):
 
 
 if __name__ == "__main__":
+     # Start timing
+    start_time = time.time()
     reddit_data = get_reddit_data()
     
     for i in range(10):
         sentiment = analyze_post_sentiment(reddit_data[i])
         print(f"URL: {reddit_data[i]['url']}, Sentiment: {sentiment}")
+    # End timing
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"It takes {elapsed_time:.2f} seconds")
