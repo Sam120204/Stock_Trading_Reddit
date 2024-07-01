@@ -4,8 +4,7 @@ import os
 import time
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor
-from filter_post import is_relevant_post  # Import the filtering function
-
+from filter_post import is_relevant_post
 
 # Function to setup Reddit API
 def setup_reddit_api():
@@ -31,7 +30,6 @@ def fetch_comments(post):
 
     Args:
         post (praw.models.Submission): The Reddit post.
-        nums (int): The number of comments to fetch.
 
     Returns:
         tuple: A tuple containing the list of comments data and the total number of comments.
@@ -112,6 +110,6 @@ if __name__ == "__main__":
     end_time = time.time()
     elapsed_time = end_time - start_time
     print(f"Fetched {len(data)} posts from Reddit. And it takes {elapsed_time:.2f} seconds")
-    for i in range(10):
+    for i in range(min(10, len(data))):
         first_post = data[i]
         print(f"URL: {first_post['url']}")

@@ -1,3 +1,4 @@
+import pandas as pd
 from openai import OpenAI
 import os
 import dotenv
@@ -44,7 +45,7 @@ def analyze_post_sentiment(post):
         f"Body: {post['body']} (Score: {post['score']})\n"
         f"URL: {post['url']}\n"
     )
-    combined_text+="Below is all comments"
+    combined_text += "Below is all comments\n"
     for comment in post['comments']:
         combined_text += f"Comment: {comment['body']} (Score: {comment['score']})\n"
         for reply in comment['replies']:
@@ -52,15 +53,50 @@ def analyze_post_sentiment(post):
     
     return analyze_sentiment(combined_text)
 
-
 if __name__ == "__main__":
-     # Start timing
-    start_time = time.time()
+    # Load the Reddit data
     reddit_data = get_reddit_data()
-    
-    for i in range(10):
+    # Start timing
+    start_time = time.time()
+    # Analyze sentiment and save to new CSV
+    sentiments = []
+    for i in range(len(reddit_data)):
         sentiment = analyze_post_sentiment(reddit_data[i])
         print(f"URL: {reddit_data[i]['url']}, Sentiment: {sentiment}")
+        reddit_data[i]['sentiment'] = sentiment
+        sentiments.append(reddit_data[i])
+
+    # Convert to DataFrame and save to CSV
+    rows = []
+    for post in sentiments:
+        post_info = {
+            'post_title': post['title'],
+            'post_body': post['body'],
+            'post_created_utc': post['created_utc'],
+            'post_score': post['score'],
+            'post_url': post['url'],
+            'sentiment': post['sentiment']  # Add sentiment to the post info
+        }
+        for comment in post['comments']:
+            comment_info = {
+                'comment_body': comment['body'],
+                'comment_created_utc': comment['created_utc'],
+                'comment_score': comment['score']
+            }
+            # Add comment info with post info
+            rows.append({**post_info, **comment_info, 'reply_body': '', 'reply_score': ''})
+            for reply in comment['replies']:
+                reply_info = {
+                    'reply_body': reply['body'],
+                    'reply_created_utc': reply['created_utc'],
+                    'reply_score': reply['score']
+                }
+                # Add reply info with post and comment info
+                rows.append({**post_info, **comment_info, **reply_info})
+
+    df = pd.DataFrame(rows)
+    df.to_csv('reddit_data_with_sentiment.csv', index=False)
+
     # End timing
     end_time = time.time()
     elapsed_time = end_time - start_time
