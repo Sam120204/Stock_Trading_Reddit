@@ -47,5 +47,25 @@ Antitrust lawsuits
 Diminishing marginal returns
 
 Anyways, this is just my thesis. Would like to know more why folks are bullish to challenge this and change my mind."""
-sentiment_score = predict_sentiment(text)
+
+
+text2 = """BlackRock launches stock ETF MAXJ with 100% downside hedge . Good investment?
+
+(Reuters) -BlackRock has launched a 'buffer' exchange-traded fund that seeks to offer a 100% downside hedge to risk-shy investors looking to tap the equity markets, the world's largest asset manager said on Monday.
+
+So-called buffer or risk-managed ETFs help maximize returns from an asset for investors and simultaneously provide downside protection over a specific period.
+
+The novel product will likely appeal to investors who are hoping to ride a rally in the stock markets as they continue to trade near record highs, but are concerned that a slowing economy and higher-for-longer interest rates can together hurt sentiment going forward.
+
+Buffer ETFs also typically see lower redemption requests during times of heavy market volatility.
+
+"BlackRock is not early - and actually is a little late - to the buffered ETF game, but with (the company's) size, reach, and marketing machine, it has a fair chance of catching up with and surpassing earlier market entrants," said Michael Ashley Schulman, partner and CIO at Running Point Capital Advisors.
+
+"Launching buffered ETFs now, when the market is near all-time highs and many investors are nervous - especially with inflation, upcoming elections, and expanding debt - could be especially fortuitous for them," he added.
+
+The iShares Large Cap Max Buffer Jun ETF started trading on Monday under the ticker symbol 'MAXJ'.
+
+https://finance.yahoo.com/news/blackrock-launches-stock-etf-100-144057919.html"""
+
+sentiment_score = predict_sentiment(text2)
 print(f"Predicted Sentiment Score: {sentiment_score}")

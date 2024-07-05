@@ -3,6 +3,9 @@ from transformers import BertForSequenceClassification, Trainer, TrainingArgumen
 from datasets import load_from_disk
 from transformers.modeling_outputs import SequenceClassifierOutput
 
+print(torch.cuda.is_available())
+print(torch.cuda.get_device_name(0))
+
 # Load datasets
 train_dataset = load_from_disk('train_dataset')
 test_dataset = load_from_disk('test_dataset')
