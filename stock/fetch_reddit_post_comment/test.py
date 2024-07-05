@@ -67,5 +67,5 @@ The iShares Large Cap Max Buffer Jun ETF started trading on Monday under the tic
 
 https://finance.yahoo.com/news/blackrock-launches-stock-etf-100-144057919.html"""
 
-sentiment_score = predict_sentiment(text2)
+sentiment_score = predict_sentiment(text)
 print(f"Predicted Sentiment Score: {sentiment_score}")

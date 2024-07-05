@@ -39,64 +39,79 @@ def analyze_sentiment(text):
     except Exception as e:
         return f"Error: {str(e)}"
 
-def analyze_post_sentiment(post):
-    combined_text = (
-        f"Title: {post['title']} (Score: {post['score']})\n"
-        f"Body: {post['body']} (Score: {post['score']})\n"
-        f"URL: {post['url']}\n"
-    )
-    combined_text += "Below is all comments\n"
-    for comment in post['comments']:
-        combined_text += f"Comment: {comment['body']} (Score: {comment['score']})\n"
-        for reply in comment['replies']:
-            combined_text += f"Reply: {reply['body']} (Score: {reply['score']})\n"
+def chunk_text(title, body, comments, max_tokens=8192):
+    combined_text = f"Title: {title}\nBody: {body}\n"
+    chunked_texts = [combined_text]
+    current_chunk = combined_text
+
+    for comment in comments:
+        comment_text = f"Comment: {comment['body']} (Score: {comment['score']})\n"
+        if len(current_chunk) + len(comment_text) > max_tokens:
+            chunked_texts.append(current_chunk)
+            current_chunk = combined_text + comment_text
+        else:
+            current_chunk += comment_text
+        for reply in comment.get('replies', []):
+            reply_text = f"Reply: {reply['body']} (Score: {reply['score']})\n"
+            if len(current_chunk) + len(reply_text) > max_tokens:
+                chunked_texts.append(current_chunk)
+                current_chunk = combined_text + reply_text
+            else:
+                current_chunk += reply_text
+
+    if current_chunk:
+        chunked_texts.append(current_chunk)
     
-    return analyze_sentiment(combined_text)
+    return chunked_texts
+
+def analyze_post_sentiment(post):
+    title = post['title']
+    body = post['body']
+    comments = post['comments']
+    chunked_texts = chunk_text(title, body, comments)
+
+    sentiment_scores = []
+    for chunk in chunked_texts:
+        sentiment = analyze_sentiment(chunk)
+        try:
+            sentiment_scores.append(float(sentiment))
+        except ValueError:
+            continue
+    
+    if sentiment_scores:
+        return round(sum(sentiment_scores) / len(sentiment_scores), 4)
+    else:
+        return "Error: Unable to analyze sentiment"
 
 if __name__ == "__main__":
-    # Load the Reddit data
-    reddit_data = get_reddit_data()
     # Start timing
     start_time = time.time()
-    # Analyze sentiment and save to new CSV
-    sentiments = []
-    for i in range(len(reddit_data)):
-        sentiment = analyze_post_sentiment(reddit_data[i])
-        print(f"URL: {reddit_data[i]['url']}, Sentiment: {sentiment}")
-        reddit_data[i]['sentiment'] = sentiment
-        sentiments.append(reddit_data[i])
-
-    # Convert to DataFrame and save to CSV
+    
+    # Load the Reddit data
+    reddit_data = get_reddit_data()
+    
+    # Analyze sentiment and save to new data structure
     rows = []
-    for post in sentiments:
-        post_info = {
-            'post_title': post['title'],
-            'post_body': post['body'],
-            'post_created_utc': post['created_utc'],
-            'post_score': post['score'],
-            'post_url': post['url'],
-            'sentiment': post['sentiment']  # Add sentiment to the post info
-        }
+    for post in reddit_data:
+        combined_text = f"Title: {post['title']}\nBody: {post['body']}\n"
         for comment in post['comments']:
-            comment_info = {
-                'comment_body': comment['body'],
-                'comment_created_utc': comment['created_utc'],
-                'comment_score': comment['score']
-            }
-            # Add comment info with post info
-            rows.append({**post_info, **comment_info, 'reply_body': '', 'reply_score': ''})
+            combined_text += f"Comment: {comment['body']} (Score: {comment['score']})\n"
             for reply in comment['replies']:
-                reply_info = {
-                    'reply_body': reply['body'],
-                    'reply_created_utc': reply['created_utc'],
-                    'reply_score': reply['score']
-                }
-                # Add reply info with post and comment info
-                rows.append({**post_info, **comment_info, **reply_info})
-
+                combined_text += f"Reply: {reply['body']} (Score: {reply['score']})\n"
+        
+        sentiment = analyze_post_sentiment(post)
+        print(f"URL: {post['url']}, Sentiment: {sentiment}")
+        
+        rows.append({
+            'combined_text': combined_text,
+            'sentiment': sentiment,
+            'post_score': post['score']
+        })
+    
+    # Convert to DataFrame and save to CSV
     df = pd.DataFrame(rows)
     df.to_csv('reddit_data_with_sentiment.csv', index=False)
-
+    
     # End timing
     end_time = time.time()
     elapsed_time = end_time - start_time
