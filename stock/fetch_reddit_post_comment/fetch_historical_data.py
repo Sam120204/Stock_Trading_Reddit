@@ -21,6 +21,7 @@ PULLPUSH_URL = "https://api.pullpush.io/reddit/search/submission/"
 
 def fetch_pullpush_data(subreddit, start_epoch, end_epoch, size=100, after=None):
     params = {
+        "q": "NVDA",
         "subreddit": subreddit,
         "after": int(start_epoch) if not after else int(after),
         "before": int(end_epoch),
@@ -44,16 +45,17 @@ all_posts = []
 after = None
 
 while True:
-    data = fetch_pullpush_data(subreddit, start_epoch, end_epoch, size=100, after=after)
+    data = fetch_pullpush_data(subreddit, start_epoch, end_epoch, size=10, after=after)
     posts = data['data']
     if not posts:
         break
     all_posts.extend(posts)
-    after = posts[-1]['created_utc']  # Use the last post's creation time as the 'after' parameter
+    after = posts[0]['created_utc']  # Use the last post's creation time as the 'after' parameter
     print(f"Fetched {len(posts)} posts, total so far: {len(all_posts)}")  # Debug print
     
     # Print URLs immediately after fetching
     for post in posts:
+        print(post['created_utc'])
         post_url = f"https://www.reddit.com{post['permalink']}"
         print(f"URL: {post_url}")
 
