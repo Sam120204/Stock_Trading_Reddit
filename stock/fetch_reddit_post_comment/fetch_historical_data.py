@@ -47,6 +47,7 @@ after = None
 while True:
     data = fetch_pullpush_data(subreddit, start_epoch, end_epoch, size=10, after=after)
     posts = data['data']
+    print(data)
     if not posts:
         break
     all_posts.extend(posts)
@@ -65,3 +66,4 @@ print(f"Fetched {len(all_posts)} posts from r/{subreddit} in April first 2024.")
 end_timer = time.time()
 elapsed_time = end_timer - start_timer
 print(f"Total elapsed time: {elapsed_time:.2f} seconds")
+
