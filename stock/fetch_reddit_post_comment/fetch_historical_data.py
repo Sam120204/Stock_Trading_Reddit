@@ -62,6 +62,8 @@ def fetch_and_store_posts(subreddit, start_epoch, end_epoch, ticker):
                 break
 
             for post in posts:
+                print(post)
+                break
                 print(post['id'], subreddit, 'NVDA', post['title'], f"https://www.reddit.com{post['permalink']}",
                 post['author'], datetime.fromtimestamp(post['created_utc']), post['score'], post['num_comments'])
 
