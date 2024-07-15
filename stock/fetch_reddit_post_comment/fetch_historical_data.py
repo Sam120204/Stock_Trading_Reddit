@@ -21,14 +21,14 @@ reddit = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'),
 PULLPUSH_URL = "https://api.pullpush.io/reddit/search/submission/"
 
 # PostgreSQL's connection details
-# conn = psycopg2.connect(
-#     dbname=os.getenv("DBNAME"),
-#     user=os.getenv("USER"),
-#     password=os.getenv("PASSWORD"),
-#     host=os.getenv("HOST"),
-#     port=os.getenv("DBPORT")
-# )
-# cur = conn.cursor()
+conn = psycopg2.connect(
+    dbname=os.getenv("DBNAME"),
+    user=os.getenv("USER"),
+    password=os.getenv("PASSWORD"),
+    host=os.getenv("HOST"),
+    port=os.getenv("DBPORT")
+)
+cur = conn.cursor()
 
 
 def load_status():
@@ -62,25 +62,21 @@ def fetch_and_store_posts(subreddit, start_epoch, end_epoch, ticker):
                 break
 
             for post in posts:
-                print(post)
-                break
-                print(post['id'], subreddit, 'NVDA', post['title'], f"https://www.reddit.com{post['permalink']}",
-                post['author'], datetime.fromtimestamp(post['created_utc']), post['score'], post['num_comments'])
+                print(post['id'], subreddit, 'NVDA', post['title'], post['selftext'], f"https://www.reddit.com{post['permalink']}", datetime.fromtimestamp(post['created_utc']))
 
-                # # Check if post already exists in the database
-                # cur.execute("SELECT EXISTS(SELECT 1 FROM reddit_posts WHERE post_id = %s)", (post['id'],))
-                # exists = cur.fetchone()[0]
-                #
-                # if not exists:
-                #     # Insert post into database if it does not exist
-                #     cur.execute("""
-                #         INSERT INTO reddit_posts (post_id, subreddit, ticker, title, url, author, post_time, score, num_comments)
-                #         VALUES (%s, %s, %s, %s, %s, %s, to_timestamp(%s), %s, %s)
-                #         """, (
-                #             post['id'], subreddit, 'NVDA', post['title'], post['url'],
-                #             post['author'], post['created_utc'], post['score'], post['num_comments']
-                #         ))
-                #     conn.commit()
+                # Check if post already exists in the database
+                cur.execute("SELECT EXISTS(SELECT 1 FROM reddit_raw_posts WHERE post_id = %s)", (post['id'],))
+                exists = cur.fetchone()[0]
+
+                if not exists:
+                    # Insert post into database if it does not exist
+                    cur.execute("""
+                        INSERT INTO reddit_raw_posts (post_id, subreddit, ticker, title, url, post_time)
+                        VALUES (%s, %s, %s, %s, %s, to_timestamp(%s))
+                        """, (
+                            post['id'], subreddit, 'NVDA', post['title'], f"https://www.reddit.com{post['permalink']}", post['created_utc']
+                        ))
+                    conn.commit()
 
             after = posts[0]['created_utc']
 
@@ -95,8 +91,8 @@ def fetch_and_store_posts(subreddit, start_epoch, end_epoch, ticker):
 
 # Specify the subreddit and time period
 subreddit = 'wallstreetbets'
-start_time = datetime(2024, 7, 2)  # Start time is inclusive
-end_time = datetime(2024, 7, 3)  # End time is exclusive
+start_time = datetime(2024, 6, 29)  # Start time is inclusive
+end_time = datetime(2024, 7, 1)  # End time is exclusive
 start_epoch = int(start_time.timestamp())
 end_epoch = int(end_time.timestamp())
 

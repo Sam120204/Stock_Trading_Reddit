@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from filter_post import is_relevant_post
 
+
 # Function to setup Reddit API
 def setup_reddit_api():
     dotenv.load_dotenv()
@@ -16,13 +17,14 @@ def setup_reddit_api():
     password = os.getenv("REDDIT_PASSWORD")
 
     reddit = praw.Reddit(
-        client_id=client_id, 
-        client_secret=client_secret, 
-        user_agent=user_agent, 
-        username=username, 
+        client_id=client_id,
+        client_secret=client_secret,
+        user_agent=user_agent,
+        username=username,
         password=password
     )
     return reddit
+
 
 def fetch_comments(post):
     """
@@ -59,6 +61,7 @@ def fetch_comments(post):
         comments_data.append(comment_data)
     return comments_data, comment_count
 
+
 def fetch_post_info_on_url(reddit, url):
     """
     Fetch details of a Reddit post using its URL.
@@ -72,13 +75,13 @@ def fetch_post_info_on_url(reddit, url):
     """
     # Extract the submission ID from the URL
     submission_id = url.split('/')[-3]
-    
+
     # Fetch the submission
     submission = reddit.submission(id=submission_id)
-    
+
     # Fetch comments data and count
     comments_data, comment_count = fetch_comments(submission)
-    
+
     # Return post details
     post_info = {
         'title': submission.title,
@@ -87,8 +90,9 @@ def fetch_post_info_on_url(reddit, url):
         'comments': comments_data,
         'url': submission.url
     }
-    
+
     return post_info
+
 
 def fetch_posts_and_comments(reddit, subreddits, limit=100):
     results = []
@@ -103,14 +107,16 @@ def fetch_posts_and_comments(reddit, subreddits, limit=100):
             for post in posts:
                 if post.created_utc < time_filter:
                     continue
-                futures.append(executor.submit(fetch_post_info_on_url, reddit, f"https://www.reddit.com{post.permalink}"))
-        
+                futures.append(
+                    executor.submit(fetch_post_info_on_url, reddit, f"https://www.reddit.com{post.permalink}"))
+
         for future in as_completed(futures):
             post_data = future.result()
-            if is_relevant_post(post_data) and len(post_data['comments']) >= 30:
+            if is_relevant_post(post_data) and len(post_data['comments']) + post_data['score'] >= 25:
                 results.append(post_data)
 
     return results
+
 
 def fetch_posts_and_comments_parallel(reddit, urls):
     results = []
@@ -120,10 +126,11 @@ def fetch_posts_and_comments_parallel(reddit, urls):
 
         for future in as_completed(futures):
             post_data = future.result()
-            if len(post_data['comments']) + post_data['score'] >= 40: # adjust this if necessary
+            if len(post_data['comments']) + post_data['score'] >= 25:  # adjust this if necessary
                 results.append(post_data)
 
     return results
+
 
 def get_reddit_data(limit=100):
     reddit_api = setup_reddit_api()
@@ -139,15 +146,17 @@ def get_reddit_data(limit=100):
     data = fetch_posts_and_comments(reddit_api, subreddits, limit)
     return data
 
+
 def get_reddit_data_from_urls(urls):
     reddit_api = setup_reddit_api()
     data = fetch_posts_and_comments_parallel(reddit_api, urls)
     return data
 
+
 if __name__ == "__main__":
     # Start timing
     start_time = time.time()
-    
+
     # # Fetch data using subreddits
     # data = get_reddit_data()
     # print(data)
@@ -155,8 +164,8 @@ if __name__ == "__main__":
 
     # Example URLs
     urls = [
-        'https://www.reddit.com/r/wallstreetbets/comments/1dtyos2/nvda_si_on_the_rise/',
-        'https://www.reddit.com/r/wallstreetbets/comments/1dtv40t/how_do_you_guys_consistently_stay_profitable/'
+        'https://www.reddit.com/r/wallstreetbets/comments/1dsiyke/nvda_to_3t/'
+
     ]
 
     # Fetch data using URLs
