@@ -32,24 +32,24 @@ def fetch_and_process_posts(start_time: datetime, end_time: datetime):
     for row in rows:
         post_id, url = row
         print(url)
-        try:
-            posts = get_reddit_data_from_urls([url])
-            print(posts)
+        # try:
+        posts = get_reddit_data_from_urls([url])
+        print(posts)
 
-            for post in posts:
+        for post in posts:
+
+            cur.execute("SELECT EXISTS(SELECT 1 FROM reddit_post_scores WHERE post_id = %s)", (post_id,))
+            exists = cur.fetchone()[0]
+
+            if not exists:
                 # Analyze sentiment
-                sentiment_score = analyze_post_sentiment(post['content'])
+                sentiment_score = analyze_post_sentiment(post)
 
                 # Store results in reddit_post_scores
                 cur.execute("""
                     INSERT INTO reddit_post_scores (post_id, score, num_comments, sentiment_score)
                     VALUES (%s, %s, %s, %s)
-                    ON CONFLICT (post_id) DO UPDATE
-                    SET score = EXCLUDED.score,
-                        num_comments = EXCLUDED.num_comments,
-                        sentiment_score = EXCLUDED.sentiment_score,
-                        analysis_time = CURRENT_TIMESTAMP
-                """, (post_id, post['score'], post['num_comments'], sentiment_score))
+                """, (post_id, post['score'], len(post['comments']), sentiment_score))
 
                 # Update the reddit_raw_posts table status to 'analyzed'
                 cur.execute("""
@@ -58,12 +58,12 @@ def fetch_and_process_posts(start_time: datetime, end_time: datetime):
                     WHERE post_id = %s
                 """, (post_id,))
 
-            # Commit the transaction for each URL
-            conn.commit()
-
-        except Exception as e:
-            print(f"Error processing post_id {post_id}: {e}")
-            conn.rollback()  # Rollback in case of error to maintain data integrity
+        # Commit the transaction for each URL
+        conn.commit()
+        #
+        # except Exception as e:
+        #     print(f"Error processing post_id {post_id}: {e}")
+        #     conn.rollback()  # Rollback in case of error to maintain data integrity
 
 
 # Example usage

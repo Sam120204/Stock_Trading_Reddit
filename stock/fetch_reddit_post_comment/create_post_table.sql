@@ -12,7 +12,7 @@ CREATE TABLE reddit_raw_posts (
 );
 
 CREATE TABLE reddit_post_scores (
-    post_id VARCHAR(50) REFERENCES reddit_posts(post_id),
+    post_id VARCHAR(50) REFERENCES reddit_raw_posts(post_id),
     score INT,
     num_comments INT,
     sentiment_score NUMERIC(5, 2),

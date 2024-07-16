@@ -21,7 +21,8 @@ def setup_reddit_api():
         client_secret=client_secret,
         user_agent=user_agent,
         username=username,
-        password=password
+        password=password,
+        debug=True
     )
     return reddit
 
@@ -164,8 +165,8 @@ if __name__ == "__main__":
 
     # Example URLs
     urls = [
-        'https://www.reddit.com/r/wallstreetbets/comments/1dsiyke/nvda_to_3t/'
-
+        'https://www.reddit.com/r/wallstreetbets/comments/1dtyos2/nvda_si_on_the_rise/',
+        'https://www.reddit.com/r/wallstreetbets/comments/1dtv40t/how_do_you_guys_consistently_stay_profitable/'
     ]
 
     # Fetch data using URLs
