@@ -1,0 +1,375 @@
+ID: 1e40e8s, Title: Does market fundamental analysis completely not matter any longer whatsoever??, Score: 15, Comments: 157, Created: 2024-07-15 17:17:07
+Attributes:
+STR_FIELD: id
+all_awardings: []
+allow_live_comments: False
+approved_at_utc: None
+approved_by: None
+archived: False
+author: PandaAnaconda
+author_flair_background_color: None
+author_flair_css_class: None
+author_flair_richtext: []
+author_flair_template_id: None
+author_flair_text: None
+author_flair_text_color: None
+author_flair_type: text
+author_fullname: t2_apb6d9fz
+author_is_blocked: False
+author_patreon_flair: False
+author_premium: False
+awarders: []
+banned_at_utc: None
+banned_by: None
+can_gild: False
+can_mod_post: False
+category: None
+clicked: False
+comment_limit: 2048
+comment_sort: confidence
+comments: <praw.models.comment_forest.CommentForest object at 0x00000201DB263A50>
+content_categories: None
+contest_mode: False
+created: 1721063827.0
+created_utc: 1721063827.0
+discussion_type: None
+distinguished: None
+domain: self.wallstreetbets
+downs: 0
+edited: False
+flair: <praw.models.reddit.submission.SubmissionFlair object at 0x00000201DB263890>
+fullname: t3_1e40e8s
+gilded: 0
+gildings: {}
+hidden: False
+hide_score: False
+id: 1e40e8s
+is_created_from_ads_ui: False
+is_crosspostable: False
+is_meta: False
+is_original_content: False
+is_reddit_media_domain: False
+is_robot_indexable: True
+is_self: True
+is_video: False
+likes: None
+link_flair_background_color: #800080
+link_flair_css_class: question
+link_flair_richtext: [{'e': 'text', 't': 'Discussion'}]
+link_flair_template_id: 96f6c79e-b853-11e5-a4cb-0ebdf030e05d
+link_flair_text: Discussion
+link_flair_text_color: light
+link_flair_type: richtext
+locked: False
+media: None
+media_embed: {}
+media_only: False
+mod: <praw.models.reddit.submission.SubmissionModeration object at 0x00000201DB18B050>
+mod_note: None
+mod_reason_by: None
+mod_reason_title: None
+mod_reports: []
+name: t3_1e40e8s
+no_follow: False
+num_comments: 157
+num_crossposts: 0
+num_reports: None
+over_18: False
+parent_whitelist_status: some_ads
+permalink: /r/wallstreetbets/comments/1e40e8s/does_market_fundamental_analysis_completely_not/
+pinned: False
+pwls: 7
+quarantine: False
+removal_reason: None
+removed_by: None
+removed_by_category: None
+report_reasons: None
+saved: False
+score: 13
+secure_media: None
+secure_media_embed: {}
+selftext: If not can someone explain how the hell TSLA can moon indefinitely while actually profitable stocks like TSM and NVDA has literally been stuck forever at the same price for the past 2 months despite numerous positive earnings and news?
+
+Like literally none of this makes a single bit of sense whatsoever. At all. And ASTS just had a disastrous news on an accident and that stock freaking mooned instead. Boeing just got sued and is liable for criminal charges and stock went up abit too. What the goddamn hell????
+
+Are we supposed to just reverse everything now, cos that's what institutions are doing? Good stock news? Be bearish and sell. Bad stock news? BUY!
+
+Is that it???
+selftext_html: <!-- SC_OFF --><div class="md"><p>If not can someone explain how the hell TSLA can moon indefinitely while actually profitable stocks like TSM and NVDA has literally been stuck forever at the same price for the past 2 months despite numerous positive earnings and news?</p>
+
+<p>Like literally none of this makes a single bit of sense whatsoever. At all. And ASTS just had a disastrous news on an accident and that stock freaking mooned instead. Boeing just got sued and is liable for criminal charges and stock went up abit too. What the goddamn hell????</p>
+
+<p>Are we supposed to just reverse everything now, cos that&#39;s what institutions are doing? Good stock news? Be bearish and sell. Bad stock news? BUY!</p>
+
+<p>Is that it???</p>
+</div><!-- SC_ON -->
+send_replies: True
+shortlink: https://redd.it/1e40e8s
+spoiler: False
+stickied: False
+subreddit: wallstreetbets
+subreddit_id: t5_2th52
+subreddit_name_prefixed: r/wallstreetbets
+subreddit_subscribers: 16021481
+subreddit_type: public
+suggested_sort: confidence
+thumbnail: self
+thumbnail_height: None
+thumbnail_width: None
+title: Does market fundamental analysis completely not matter any longer whatsoever??
+top_awarded_type: None
+total_awards_received: 0
+treatment_tags: []
+ups: 13
+upvote_ratio: 0.53
+url: https://www.reddit.com/r/wallstreetbets/comments/1e40e8s/does_market_fundamental_analysis_completely_not/
+user_reports: []
+view_count: None
+visited: False
+whitelist_status: some_ads
+wls: 7
+Post Text: 
+
+    Loiter and lose money (with friends) in our Daily Discussion threads or check out WSB Discord
+
+
+Comment ID: ldbhfcd, Body: 
+**User Report**| | | |
+:--|:--|:--|:--
+**Total Submissions** | 6 | **First Seen In WSB** | 2 weeks ago
+**Total Comments** | 101 | **Previous Best DD** | 
+**Account Age** | 3 years | | 
+
+[**Join WSB Discord**](http://discord.gg/wsbverse), Score: 1, Created: 2024-07-15 17:17:11
+Comment ID: ldbie79, Body: I stopped reading after, “NVDA has literally been stuck forever at the same price”, Score: 409, Created: 2024-07-15 17:22:25
+Comment ID: ldbjkdg, Body: The ravings of a person who entered the market 3 weeks ago., Score: 152, Created: 2024-07-15 17:28:39
+Comment ID: ldblq4a, Body: Nvidia has stayed the same price? You are delusional brother., Score: 51, Created: 2024-07-15 17:40:10
+Comment ID: ldbsr98, Body: Try zooming out on the chart lmao, Score: 36, Created: 2024-07-15 18:17:40
+Comment ID: ldbl7gj, Body: My lord these are the people who are gonna get slaughtered in the next correction 😂. 1 month of reduced volatility and its “the markets make no sense!”. I’ll let you in on a little secret, the markets have NEVER made ANY sense. When we say this is a casino that’s not a joke, Score: 50, Created: 2024-07-15 17:37:24
+Comment ID: ldc05no, Body: 11 year olds are trading. The top is in boys. Pack it up., Score: 23, Created: 2024-07-15 18:57:11
+Comment ID: ldbkye1, Body: it never did. It's all an illusion, Score: 16, Created: 2024-07-15 17:36:04
+Comment ID: ldbslrs, Body: TSM up 80% YTD NVDA 164% bro your tripping TSLA is up 4% on the year, Score: 15, Created: 2024-07-15 18:16:52
+Comment ID: ldbq3lg, Body: There's a great book called "a random walk down wall street". TLDR no and it never has. The market is random and unpredictable for day trading, it's mostly luck. You see all the posts and jokes here about "no news is good news and bad news is good news" or "I bought calls so it's gonna tank". Whenever I see someone with their crayons trying to predict and time breakouts and what not I just think they are a clown. I don't know jack shit about trading and I'm up 40k this year. I'm going to put it all in some indexes and hopefully retire early., Score: 14, Created: 2024-07-15 18:03:23
+Comment ID: ldbl1qh, Body: Where have you been since March 2020?, Score: 13, Created: 2024-07-15 17:36:34
+Comment ID: ldblbis, Body: Markets are controlled by human emotion, not fundamentals., Score: 20, Created: 2024-07-15 17:38:00
+Comment ID: ldbqp2k, Body: Come on dude you haven't done any fundamental analysis. Stop bsing, Score: 9, Created: 2024-07-15 18:06:37
+Comment ID: ldbpmdo, Body: Lol what?
+
+I was going to say OP is insane until I realized 2 months to him is a long time in investing..., Score: 8, Created: 2024-07-15 18:00:49
+Comment ID: ldbso0u, Body: Fundamental analysis is just getting more difficult to actually build processes on. Consider Goldhart’s law: as soon as a measure of success becomes a target, it fails to be a good measure of success. Once a good investing strategy based on fundamentals are discovered, it gets played out and meta strategies spawn out of the trend that creates. There will always be some combination of fundamental analysis and personal discretion that works, but the level of difficulty in the analysis necessary to understand the market at any given point is varied and dependent on chaotic factors, Score: 9, Created: 2024-07-15 18:17:11
+Comment ID: ldbsz20, Body: Fundamentals truly matter very little in markets anymore.  That is correct.  Question is, will you also subscribe to this detached mentality and profit from it, or do as I and the ghey bers have done, fight it, and just sit flat for the last year?, Score: 9, Created: 2024-07-15 18:18:49
+Comment ID: ldbmp1f, Body: Tell me, how you think a stock is valued according to fundamentals?, Score: 5, Created: 2024-07-15 17:45:20
+Comment ID: ldbtdru, Body: NVDA was at $900+ 2 months ago. Lay off the vape bro., Score: 5, Created: 2024-07-15 18:21:01
+Comment ID: ldbuokz, Body: Dude NVDA was up 130% YTD
+
+TSLA was down 35% YTD
+
+One pumped already, give the others a turn too, Score: 4, Created: 2024-07-15 18:27:55
+Comment ID: ldc27kn, Body: Stocks are a voting machine in the short term and a weighing machine in the long term. -Scrooge McDuck (probably), Score: 5, Created: 2024-07-15 19:08:12
+Comment ID: ldbtkfs, Body: Fundamentals haven't mattered for 15 years. 
+
+Someone explain to me how Wayfair stays in business., Score: 4, Created: 2024-07-15 18:22:00
+Comment ID: ldbvfgv, Body: Let’s see the red in your portfolio 😂, Score: 3, Created: 2024-07-15 18:31:56
+Comment ID: ldbwr2t, Body: There is so much wrong with this post and I want to tear it apart but you know what?
+
+Just keep doing what you’re doing. People like you are why I’m so far ahead this year. Go ahead. Sell your NVDA buy Tesla. I’ll be glad you did., Score: 4, Created: 2024-07-15 18:38:59
+Comment ID: ldbya2u, Body: Is this a joke?, Score: 3, Created: 2024-07-15 18:47:09
+Comment ID: ldbz1fa, Body: The stock market is just a graph of rich people's feelings, Score: 3, Created: 2024-07-15 18:51:12
+Comment ID: ldc1m7t, Body: NVDA is where it was a month ago. In the prior 11, it 3x'ed. What the hell are you talking about?, Score: 3, Created: 2024-07-15 19:05:00
+Comment ID: ldc7hj5, Body: Only fundamental i follow is all rivers lead to the ocean. Rivers as in money printed out of thin air and debt outstanding, and Ocean as in stock market and real estate. , Score: 3, Created: 2024-07-15 19:36:30
+Comment ID: ldcw5r6, Body: I like to think that NVDA hasn't spiked (compared to previous weeks) recently because it's taking a pause while other mag7 rises to justify its #3 position. 
+
+Tim Cooks just stepped the nitro boost recently, and it's #1 now
+
+Zuck has been rising pretty decent due to the dip buyers last earnings
+
+Indian guy is slowly but surely rising
+
+Bezos will finally go 200 until he stops fucking selling
+
+Only Gates is in need of some HIMS but 6/7 is good enough
+
+And Elon is ketamining and memeing
+
+But to answer your question directly, the whole market is fuck. Too many cooks, not enough tims, Score: 3, Created: 2024-07-15 21:50:39
+Comment ID: ldbkry9, Body: Fundamental analysis matters but the market is forward looking so it is reacting to changes in future expectations., Score: 7, Created: 2024-07-15 17:35:06
+Comment ID: ldbipkh, Body: What ASTS “accident”?, Score: 2, Created: 2024-07-15 17:24:06
+Comment ID: ldbppid, Body: OP's regardation is confirmed with his NVDA comment, but for real. Fundamentals literally do not matter and have not been predictive for 15 years. See my flair, you know how much money I've lost on shorting overpriced trash?
+
+The only things that matter are total market liquidity (M2 or M0) for indices and momentum for individual stocks. The market won't go down because the Fed won't let it go down, and the only thing limiting it upwards is the amount of money in the economy that's available to invest.
+
+The Fed has essentially nationalized SPY and made it into the American sovereign pension fund. The stock market isn't an actual market any more, it's more like a second Social Security program., Score: 3, Created: 2024-07-15 18:01:17
+Comment ID: ldbvjal, Body: Ummmm... Hm. Okay. If you had 100 shares of NVDA (post-split) exactly 2 months ago you'd have $9,300, today you'd have $12,800. I may not be a smart man but I do know what math is.
+
+That being said, yes the market is irrational so stop trying to make sense of it., Score: 2, Created: 2024-07-15 18:32:30
+Comment ID: ldc4fz3, Body: ![img](emote|t5_2th52|4271)![img](emote|t5_2th52|4271)![img](emote|t5_2th52|4271), Score: 2, Created: 2024-07-15 19:20:13
+Comment ID: ldcghyu, Body: OP doesn’t have a clue. TSLA has been in a downtrend for nearly 3 years! Don’t worry, NVDA will be at $200 by year end., Score: 2, Created: 2024-07-15 20:24:21
+Comment ID: ldchw3m, Body: People have either been smart asses or cultists or lunatics about game store for years. Nobody has actually accounted for its behavior., Score: 2, Created: 2024-07-15 20:31:49
+Comment ID: ldckp1u, Body: How this guy interprets fundamentals that doesn’t matter. How a value investor interprets fundamentals yes it matters for understanding a somewhat bottom of what something is worth. This can improve your odds of making money over a very long term period of time and or when it’s time to sell a asset, Score: 2, Created: 2024-07-15 20:46:48
+Comment ID: ldcmi8d, Body: "**I can calculate the movement of the stars, but not the madness of men."** Sir Isaac Newton, 1720, after losing a fortune on stock market speculation., Score: 2, Created: 2024-07-15 20:56:32
+Comment ID: lddkln5, Body: This sub used to be pretend regarded. Now I'm not so sure., Score: 2, Created: 2024-07-16 00:20:40
+Comment ID: ldcpeb6, Body: Market is driven by JPow supporting inflation as much as he can. 
+
+* Banks throw credit money at every garbage they see, e.g. ASTS or TSLA 
+* Banks nearing bankruptcy 
+* JPow starts new BTFP or another-random-name-printing program to support bankrupts 
+* All assets measured in USD start increasing in value because now we have more money for the same number of assets. This is how inflation works. 
+* Profit, Score: 3, Created: 2024-07-15 21:12:29
+Comment ID: lddf69i, Body: You’re extremely stupid, Score: 2, Created: 2024-07-15 23:46:34
+Comment ID: ldbo0d2, Body: Not when compared to the promise of easy money., Score: 1, Created: 2024-07-15 17:52:18
+Comment ID: ldbo0ti, Body: Yes but nvidia is in the same bote as tsla mate![gif](emote|free_emotes_pack|shrug), Score: 1, Created: 2024-07-15 17:52:22
+Comment ID: ldboq92, Body: growth chief squeal provide cover plate heavy thumb cheerful public, Score: 1, Created: 2024-07-15 17:56:05
+Comment ID: ldbpwoo, Body: Fundamentals
+
+Lawl, Score: 1, Created: 2024-07-15 18:02:20
+Comment ID: ldbtl7i, Body: Jokes on you I never bothered to learn fundamentals, Score: 1, Created: 2024-07-15 18:22:07
+Comment ID: ldbzdy7, Body: Takes time bud. It’s not _just_ about fundamentals obv so why act as if…?, Score: 1, Created: 2024-07-15 18:53:04
+Comment ID: ldc0azb, Body: Institutions rebalance there holdings near the end of the week and at the end of the month usually. No tellin what they do and why., Score: 1, Created: 2024-07-15 18:57:58
+Comment ID: ldc2218, Body: Tesla is profitable. , Score: 1, Created: 2024-07-15 19:07:23
+Comment ID: ldc55uk, Body: Nope things didn't change much actually. Peter Lynch figured out multiple decades ago that looking at PE and book value is just bad analysis if you're not past that point you're more than a few decades behind. If you're looking at the last 2 months as performance history you have a brain deficit not an analysis crisis., Score: 1, Created: 2024-07-15 19:24:02
+Comment ID: ldc5evc, Body: Well they mooned harder so taking a break now. It’s new TA called: Refractory period
+
+TSLA didn’t get to nut for so long so the moment a hot chick smiled at them, TSLA is squirting non stop sporadically., Score: 1, Created: 2024-07-15 19:25:23
+Comment ID: ldc7g1p, Body: Wait, Just wait, NVDA should be below $100... If a stock doesn't go up, ... It will go ... 😂 ❤️‍🔥, Score: 1, Created: 2024-07-15 19:36:17
+Comment ID: ldc98px, Body: Lol, Score: 1, Created: 2024-07-15 19:45:49
+Comment ID: ldcb235, Body: I can attest, the answer is a resounding “no.” And if you try to make it make sense, you’re missing out on the biggest trading hype and longest greed run since 2000, Score: 1, Created: 2024-07-15 19:55:22
+Comment ID: ldccad2, Body: >Good stock news? Be bearish and sell
+
+Good run take profits
+
+>Bad stock news? BUY!
+
+Invest in the future of good company, Score: 1, Created: 2024-07-15 20:01:54
+Comment ID: ldcdjvg, Body: this is a mcdonalds, Score: 1, Created: 2024-07-15 20:08:42
+Comment ID: ldciztg, Body: Show port., Score: 1, Created: 2024-07-15 20:37:44
+Comment ID: ldckwqj, Body: The long run is pretty long., Score: 1, Created: 2024-07-15 20:47:57
+Comment ID: ldctnl4, Body: Fundamentals are just guidelines. There are millions of people trading on the market with their own vision of value and opportunity. Just because something doesn’t make sense to you doesn’t mean it doesn’t make sense to other players in the market., Score: 1, Created: 2024-07-15 21:36:18
+Comment ID: ldd1ej4, Body: Until a crash, nothing matters anymore. After a crash, reality should set in., Score: 1, Created: 2024-07-15 22:21:55
+Comment ID: ldd45xs, Body: Sir, this is a casino, Score: 1, Created: 2024-07-15 22:38:40
+Comment ID: ldd5a1m, Body: Retail investors need to know their place:
+
+[https://youtu.be/o66yTLpf5Sw?t=813](https://youtu.be/o66yTLpf5Sw?t=813), Score: 1, Created: 2024-07-15 22:45:22
+Comment ID: ldd9c1r, Body: Fundamentals have been out of whack for a while but doesn’t matter. The stock market is 99% emotional with occasional mean reversion., Score: 1, Created: 2024-07-15 23:10:08
+Comment ID: lddcm1w, Body: Huh. I trade entirely on what I consider to be fundamentals with a touch of zeitgeist. I think it matters., Score: 1, Created: 2024-07-15 23:30:31
+Comment ID: lddmgi4, Body: Is someone going to let OP know about the scheduled dumps til March 2025?!!, Score: 1, Created: 2024-07-16 00:32:25
+Comment ID: lddsqd7, Body: NVDA has been stuck at the same price for two months?? Where did I make all that money then?, Score: 1, Created: 2024-07-16 01:12:33
+Comment ID: lde1z63, Body: Bro talks about rational investing and points to NVDA and TSM. Well done, super regard., Score: 1, Created: 2024-07-16 02:13:10
+Comment ID: lde3bic, Body: Market research and analysis only matters if you are better at it and doing it before anyone else. You have to get the information before the insiders, unless it's a really small company that might not be on peoples radar. Everything is priced in. Stop thinking and just put your savings into spy 0dtes like an adult., Score: 1, Created: 2024-07-16 02:22:11
+Comment ID: lde5oys, Body: In the long term it will. Not in the short term., Score: 1, Created: 2024-07-16 02:38:20
+Comment ID: ldfnkx3, Body: Hmm maybe just maybe you should zoom out a little and see that NVIDIA is up over 150% YTD and Tesla 1,7%. The theory always was stocks do what they want in the short term or what algos want and in the direction of their intrinsic value in the long term., Score: 1, Created: 2024-07-16 11:23:56
+Comment ID: ldgo5fb, Body: #NO, Score: 1, Created: 2024-07-16 15:28:24
+Comment ID: ldn3je0, Body: Zoom out bozo, Score: 1, Created: 2024-07-17 17:31:40
+Comment ID: ldc1vou, Body: Yes, FA is crap, Score: 0, Created: 2024-07-15 19:06:25
+Comment ID: ldbkw12, Body: Seriously, "forever at the same price for the past 2 months". OP must have the existential attention span similar to the life-cycle of a housefly or a mosquito, Score: 182, Created: 2024-07-15 17:35:43
+Comment ID: ldbl190, Body: People, if you get real investment advice from WSB, you really are a regard. 
+
+Fundamentals do matter, even on speculative stocks., Score: 23, Created: 2024-07-15 17:36:29
+Comment ID: ldbord7, Body: Covid artificially pumped market ruined people’s perception of market timelines.
+
+People here have the attention span of a…hey look a squirrel. ![img](emote|t5_2th52|31226), Score: 24, Created: 2024-07-15 17:56:15
+Comment ID: ldbpne3, Body: I was going to say OP is insane until I realized 2 months to him is a long time in investing..., Score: 13, Created: 2024-07-15 18:00:58
+Comment ID: lddcdig, Body: Exactly, up nearly +180% within 1 year and +2971% within 5 years…. He said stock been stuck lol ![img](emote|t5_2th52|4271)![img](emote|t5_2th52|4271), Score: 3, Created: 2024-07-15 23:29:03
+Comment ID: ldbikfj, Body: For the past month, sorta. Once you zoom out..., Score: 4, Created: 2024-07-15 17:23:20
+Comment ID: lddff9o, Body: Also: “disastrous news…ASTS.”, Score: 1, Created: 2024-07-15 23:48:07
+Comment ID: ldgo6t1, Body: ![img](emote|t5_2th52|4271), Score: 1, Created: 2024-07-16 15:28:37
+Comment ID: ldbqs2a, Body: ![img](emote|t5_2th52|27189), Score: 8, Created: 2024-07-15 18:07:04
+Comment ID: ldezghu, Body: Sounds like me…bought in at $138 😂, Score: 2, Created: 2024-07-16 06:57:39
+Comment ID: ldbnyzk, Body: Maybe OP missed out on Nvidia stock split and thought NVIDIA crashed, Score: 24, Created: 2024-07-15 17:52:06
+Comment ID: ldc7idq, Body: TSLA actually down 9% from 12 months ago and NVDA up 180% in the same time frame., Score: 7, Created: 2024-07-15 19:36:38
+Comment ID: ldbv9l8, Body: Maybe I gotta check that book out, Score: 2, Created: 2024-07-15 18:31:03
+Comment ID: ldc074q, Body: Flat at 0 ![img](emote|t5_2th52|4260), Score: 3, Created: 2024-07-15 18:57:24
+Comment ID: ldc7rgi, Body: DMT trips seem to last forever- ver -ver -ver, Score: 3, Created: 2024-07-15 19:37:58
+Comment ID: ldbqocr, Body: didn't know the market could predict ASTS' issue and somehow gave the stock a bump?, Score: -4, Created: 2024-07-15 18:06:30
+Comment ID: ldbmalh, Body: Falcon 9 had an issue that is being investigated. Really its a SpaceX issue which might have downstream impacts on AST., Score: 5, Created: 2024-07-15 17:43:10
+Comment ID: ldbmtnh, Body: I was hoping it would dip to buy more, bet it will happen when the delays are eventually announced, Score: 5, Created: 2024-07-15 17:46:01
+Comment ID: lddy91d, Body: ![img](emote|t5_2th52|27189), Score: 1, Created: 2024-07-16 01:48:37
+Comment ID: lde8i54, Body: if you bought at 135-140, you'd STILL be at a loss now, Score: 0, Created: 2024-07-16 02:57:38
+Comment ID: ldd8l5x, Body: That guy doesn't fuck., Score: 3, Created: 2024-07-15 23:05:30
+Comment ID: ldfnq5x, Body: The diff is NVDA makes a ton of actual money. TSLA doesnt., Score: 1, Created: 2024-07-16 11:25:15
+Comment ID: ldcew7w, Body: Fugasi, some would say it is astrology for finance nerds., Score: 1, Created: 2024-07-15 20:15:51
+Comment ID: ldc0ixx, Body: Tiktok generation needs that dopamine hit every 2 min, Score: 66, Created: 2024-07-15 18:59:09
+Comment ID: ldbw1p8, Body: priced in, Score: 0, Created: 2024-07-15 18:35:14
+Comment ID: ldg7imk, Body: Wait some more. The record will keep on increasing I fucking bet you. NVDA took a dump YET AGAIN. It WILL NEVER go back up to even 140 even up to end-August. Bet you that, Score: 0, Created: 2024-07-16 13:52:54
+Comment ID: ldbr3hc, Body: Still gonna say that when NVDA is still at 125 one year later??, Score: -47, Created: 2024-07-15 18:08:46
+Comment ID: ldby2su, Body: They don't matter on TSLA or DJT., Score: 3, Created: 2024-07-15 18:46:04
+Comment ID: lddfo6c, Body: Really? Where?
+
+(I love squirrels.), Score: 1, Created: 2024-07-15 23:49:40
+Comment ID: lde9hib, Body: Oh please, you can zoom out on most stocks, pick a favorable timeline to fit your narrative, then say the stock has overall risen.
+
+July is spposed be the strongest month for tech stock yet we are not seeing it this year. Clearly something is wrong, Score: -1, Created: 2024-07-16 03:04:40
+Comment ID: ldbs7ko, Body: ASTS is mostly being traded by retail and a very limited number of institutional investors who have serious faith in the long term potential of the company. It’s the space industry, mishaps are priced in. If it wasn’t assumed that there would be fuckups, this stock would already be worth way more. Look at the history of the stock, it’s already eaten shit due to technical delays multiple times and bounced back, so based on that you can see that at this point its investors are confident in long term success, Score: 6, Created: 2024-07-15 18:14:45
+Comment ID: ldbmehj, Body: Oh…yawn, Score: 6, Created: 2024-07-15 17:43:45
+Comment ID: ldc3tg3, Body: He ignores the fact that ASTS had a successful satellite launch, as well., Score: 2, Created: 2024-07-15 19:16:51
+Comment ID: ldbne0w, Body: I hope so. I kinda want it to go way down so I can get lots more shares at a good price, Score: 5, Created: 2024-07-15 17:49:02
+Comment ID: ldh4iiz, Body: Ten billion in 2023 is not making no money. Besides that that’s maybe the reason NVIDIA value increase about 160% YTD?! and Tesla didn’t and NVIDIA is valued higher than Tesls?, Score: 1, Created: 2024-07-16 16:56:49
+Comment ID: lddr0ae, Body: That would be TA, Score: 1, Created: 2024-07-16 01:01:19
+Comment ID: ldccmgi, Body: No joke. The kid in front of me at the movies was taking selfies pretending to watch the movie... He then started playing a trash mobile game, dude. He was at least 18...wtf, Score: 15, Created: 2024-07-15 20:03:42
+Comment ID: ldc15o4, Body: I'd offer a grown up opinion on the cortisol and dopamine functions as neruo-regulators and why shit on the screen doesn't matter.... but here we are on Reddit
+
+EDIT: If people are actually interested in how to keep your brain kicking at a good rate, that gentleman Andrew Huberman has a pretty decent podcast. I let him drone on in my head whenever I am out cycling/jogging/or just working on menial work that doesn't require brainpower
+
+[https://www.youtube.com/watch?v=QmOF0crdyRU](https://www.youtube.com/watch?v=QmOF0crdyRU), Score: 4, Created: 2024-07-15 19:02:30
+Comment ID: ldg9h1x, Body: I have no valuable comment here... I will not tell you how to gamble your money. I don't make timed bets, so I don't do options. I am here for the loss porn. 
+
+Godspeed regard, may the crayons be with you., Score: 2, Created: 2024-07-16 14:04:45
+Comment ID: ldbs8k5, Body: My guy, I've been sitting on AMD and NVDA for almost 10 years now... I have patience, Score: 19, Created: 2024-07-15 18:14:54
+Comment ID: ldbswht, Body: Goddam son, if you are playing the "I'm regarded" game you are very convincing, Score: 25, Created: 2024-07-15 18:18:26
+Comment ID: ldc5j7g, Body: of course they do. that's what makes them speculative stocks vs a growth stock or a value stock. just because speculation can outlast your investment risk doesn't mean fundamentals don't matter. 
+
+  
+people are too quick to forget when the crypto rug was pulled, many people had put entire life savings into crypto and all the subreddits were posting suicide prevention links., Score: 3, Created: 2024-07-15 19:26:01
+Comment ID: ldckt6d, Body: I'd argue that they matter at least a little on TSLA(although they're still often based on unrealistic projections of earnings/revenue growth).  People are still trying to project future results on TSLA, even if those projections are totally wild and tied to the idea that Elon is a genius miracle worker.
+
+DJT is full blown meme stock/speculation territory.  It has the potential to swing wildly for reasons completely unrelated to its actual valuation, be it Trump selling shares to raise cash, or a political ally buying shares to channel money to Trump.  Just full-fledged gambling here., Score: 3, Created: 2024-07-15 20:47:25
+Comment ID: ldc0xsi, Body: Then load up, Score: 3, Created: 2024-07-15 19:01:20
+Comment ID: lde8eyd, Body: when stock goes up after bad news. "It's already priced in"
+
+when stocks goes down after bad news. "See? Fundamentals work!", Score: 0, Created: 2024-07-16 02:57:01
+Comment ID: lddm4vx, Body: Geezus! It’s at $13.5! How broke are you?, Score: 0, Created: 2024-07-16 00:30:21
+Comment ID: ldk1491, Body: I mean their profits have declined and yet their stock went up instead.
+
+How the fuck does this remotely make any sense? I remember there was a topic here before explaining that Musk may be manipulating the options market, Score: 1, Created: 2024-07-17 03:18:26
+Comment ID: ldh9wxj, Body: That was the joke. However, neither predict where price action is headed., Score: 1, Created: 2024-07-16 17:25:53
+Comment ID: lddfjbe, Body: This is legitimately frightening. Screentime draconian measures, commence., Score: 4, Created: 2024-07-15 23:48:49
+Comment ID: ldcbyda, Body: lol Huberman is to medical science what OP's post is to Financial Analysis, Score: 17, Created: 2024-07-15 20:00:07
+Comment ID: ldc5tkm, Body: I'm sorry did you actually just link a freaking joker on youtube as your grown up opinion and not a science paper about the actual effects?, Score: 8, Created: 2024-07-15 19:27:35
+Comment ID: ldg9uil, Body: If you're waiting for NVDA to rise back to at least 140, you're gonna be waiting till like October or something. By that time, bears would've multiplied their gains so many times and other bulls could've earned so much more on just riding VOO.
+
+I'm willing bet the only time NVDA will finally rise to over 140 is past October 1st., Score: 1, Created: 2024-07-16 14:06:59
+Comment ID: ldeweuf, Body: you are delusional if you think NVDA will still continue to rise over the next 10 years without a bubble crash eventually, Score: -1, Created: 2024-07-16 06:25:05
+Comment ID: ldc601v, Body: But TSLA is rising on bad news regularly and DJT... as far as I can tell the only story that makes sense is that other regards will pump this worthless stock or that you might intercept some money meant to be a Saudi bribe?, Score: 3, Created: 2024-07-15 19:28:33
+Comment ID: ldc533l, Body: If I do that, they'll instantly crash., Score: 3, Created: 2024-07-15 19:23:38
+Comment ID: ldek4y4, Body: I mean I’m partially basing my claim on data from
+today’s trading, correct. It’s an explanation of what I think is going on in hindsight. I don’t try to predict short term movement for this stock, or any stock though in general. I just hold. And buy more., Score: 1, Created: 2024-07-16 04:27:55
+Comment ID: lddo6j2, Body: Like you wouldn’t give your left nut to be able to back and get Amazon at $2/share. Fuck off, Score: 1, Created: 2024-07-16 00:43:18
+Comment ID: ldc7ymh, Body: Wut?! [https://med.stanford.edu/profiles/andrew-huberman](https://med.stanford.edu/profiles/andrew-huberman)
+
+Like I said, i need a voice in my head. You may call him a clown, and you go read all you want, but I am not going to be reading while on my bike, Score: 1, Created: 2024-07-15 19:39:04
+Comment ID: ldgasy8, Body: Okay... I won't argue something I have no real opinion/thought on... I can tell you feel very passionate about dates though.
+
+the last batch I bought was Feb and before that was November and I like to take long term capital gains rather than short so i don't aggro my regular taxable income.
+
+EDIT: I see the confusion here, you seem to think I only own NVDA shares... if it doesn't go up something else in my portfolio will... as per your example VOO which I hold as well., Score: 1, Created: 2024-07-16 14:12:42
+Comment ID: ldewu2f, Body: RemindMe! 3650 day, Score: 1, Created: 2024-07-16 06:29:30
+Comment ID: lddbdsy, Body: Yeah, it goes up with every bad news, and it's acting irrationally. But since these aren't backed up by fundamentals, sooner or later it is going to blow up. If you manage that risk and want to play with speculative stocks, fine, just don't put your life savings on it., Score: 1, Created: 2024-07-15 23:22:52
+Comment ID: lddon31, Body: Poor people problems, Score: 0, Created: 2024-07-16 00:46:14
+Comment ID: ldca80n, Body: If you want to talk about eyesight I guess we can talk about his science contributions but about hormone function he done zero scientific research and written zero science papers. This guy uses his little credibility in a field to promote a lot of false stuff and sell BS. This guy is a joke. If you want to link grown up opinions look at actual papers and comments on them. If you didn't know for example the Bogdanoff brothers have multiple gibberish science papers that are widely regarded as jokes so looking at some surface level marketing show is not really great adult behaviour. At least for visual science his contribution is legit after that he went off the rails for some reason.
+
+You can find his field here notice the visual related themes and the lack of hormone related fields:
+
+[https://hubermanlab.stanford.edu/publications](https://hubermanlab.stanford.edu/publications), Score: 10, Created: 2024-07-15 19:50:58
+Comment ID: ldewx1w, Body: I will be messaging you in 9 years on [**2034-07-14 06:29:30 UTC**](http://www.wolframalpha.com/input/?i=2034-07-14%2006:29:30%20UTC%20To%20Local%20Time) to remind you of [**this link**](https://www.reddit.com/r/wallstreetbets/comments/1e40e8s/does_market_fundamental_analysis_completely_not/ldewu2f/?context=3)
+
+[**CLICK THIS LINK**](https://www.reddit.com/message/compose/?to=RemindMeBot&subject=Reminder&message=%5Bhttps%3A%2F%2Fwww.reddit.com%2Fr%2Fwallstreetbets%2Fcomments%2F1e40e8s%2Fdoes_market_fundamental_analysis_completely_not%2Fldewu2f%2F%5D%0A%0ARemindMe%21%202034-07-14%2006%3A29%3A30%20UTC) to send a PM to also be reminded and to reduce spam.
+
+^(Parent commenter can ) [^(delete this message to hide from others.)](https://www.reddit.com/message/compose/?to=RemindMeBot&subject=Delete%20Comment&message=Delete%21%201e40e8s)
+
+*****
+
+|[^(Info)](https://www.reddit.com/r/RemindMeBot/comments/e1bko7/remindmebot_info_v21/)|[^(Custom)](https://www.reddit.com/message/compose/?to=RemindMeBot&subject=Reminder&message=%5BLink%20or%20message%20inside%20square%20brackets%5D%0A%0ARemindMe%21%20Time%20period%20here)|[^(Your Reminders)](https://www.reddit.com/message/compose/?to=RemindMeBot&subject=List%20Of%20Reminders&message=MyReminders%21)|[^(Feedback)](https://www.reddit.com/message/compose/?to=Watchful1&subject=RemindMeBot%20Feedback)|
+|-|-|-|-|, Score: 1, Created: 2024-07-16 06:30:22
+Comment ID: ldf408c, Body: RemindMe! 3650 day, Score: 1, Created: 2024-07-16 07:49:20
+Comment ID: lddoy22, Body: The only people that get pleasure out of calling people poor are loser incel dipshits like yourself, Score: 0, Created: 2024-07-16 00:48:09
+Comment ID: lddst5n, Body: Boo hoo! Go find some penny stocks to invest in. Since you can’t afford $13 a share! Poor!, Score: 0, Created: 2024-07-16 01:13:03
+
