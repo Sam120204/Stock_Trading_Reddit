@@ -5,4 +5,6 @@ requests
 beautifulsoup4
 psycopg2==2.9.9
 psycopg2-binary==2.9.9
+selenium
+webdriver_manager
 # then run python -m spacy download en_core_web_sm
