@@ -1,7 +1,6 @@
-import requests
-from bs4 import BeautifulSoup
 import time
 import random
+import json
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -10,6 +9,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, JavascriptException, NoSuchElementException
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -34,90 +34,87 @@ def setup_selenium():
     return driver
 
 def fetch_comments_with_selenium(url):
+    print(f"Starting to fetch comments for URL: {url}")
+    start_time = time.time()
+    
     driver = setup_selenium()
     driver.get(url)
+    comments = []
     try:
-        # Wait for the outer shadow DOM host element
-        outer_shadow_host = WebDriverWait(driver, 20).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'shreddit-comments-sort-dropdown'))
-        )
-        
-        # Access the outer shadow DOM
-        outer_shadow_root = driver.execute_script('return arguments[0].shadowRoot', outer_shadow_host)
-        
-        # Wait for the inner shadow DOM host element
-        inner_shadow_host = WebDriverWait(outer_shadow_root, 20).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'shreddit-sort-dropdown'))
-        )
-        
-        # Access the inner shadow DOM
-        inner_shadow_root = driver.execute_script('return arguments[0].shadowRoot', inner_shadow_host)
-        
-        # Wait for and click the sort dropdown
-        sort_button = WebDriverWait(inner_shadow_root, 20).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'div[slot="selected-item"]'))
-        )
-        driver.execute_script("arguments[0].click();", sort_button)
-        
-        # Wait for and click the "Top" option
-        top_option = WebDriverWait(inner_shadow_root, 20).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, 'data[value="TOP"]'))
-        )
-        driver.execute_script("arguments[0].click();", top_option)
-
         # Wait for the comments to load
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'shreddit-comment'))
         )
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
+        
+        # Extract comments directly using Selenium
+        comment_elements = driver.find_elements(By.CSS_SELECTOR, 'shreddit-comment')
+        for element in comment_elements:
+            try:
+                author = element.get_attribute('author')
+                score = int(element.get_attribute('score').replace(' points', '').replace(' point', ''))
+                comment_text = element.find_element(By.CSS_SELECTOR, 'div[slot="comment"]').text
+                comment_url = f"https://www.reddit.com{element.get_attribute('permalink')}"
+                comments.append({
+                    'author': author,
+                    'score': score,
+                    'comment_text': comment_text,
+                    'comment_url': comment_url
+                })
+            except Exception as e:
+                print(f"Error extracting comment details: {e}")
+                continue
     except TimeoutException:
         print(f"Timeout occurred while loading comments for URL: {url}")
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
     except JavascriptException as e:
         print(f"JavaScript exception: {e}")
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
     except NoSuchElementException as e:
         print(f"No such element: {e}")
-        soup = BeautifulSoup(driver.page_source, 'html.parser')
     finally:
         driver.quit()
-    return soup
 
-def parse_comments(soup):
-    comments = []
-    for comment_tag in soup.find_all('shreddit-comment'):
-        if comment_tag.get('depth') == '0':  # Only top-level comments
-            comment_details = {
-                'author': comment_tag.get('author'),
-                'score': int(comment_tag.get('score').replace(' points', '').replace(' point', '')),
-                'comment_text': comment_tag.find('div', {'slot': 'comment'}).get_text(strip=True),
-                'comment_url': f"https://www.reddit.com{comment_tag.get('permalink')}"
-            }
-            comments.append(comment_details)
-    # Sort comments by score in descending order
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time for fetching comments from {url}: {elapsed_time:.2f} seconds")
+    
+    # Sort comments by score in descending order and return top 10
     comments = sorted(comments, key=lambda x: x['score'], reverse=True)
-    return comments
+    return {
+        'url': url,
+        'fetched_at': time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(start_time)),
+        'elapsed_time': elapsed_time,
+        'comments': comments[:10]
+    }
+
+def fetch_all_comments(urls):
+    # Clear the JSON file before appending new data
+    with open('comments.json', 'w') as f:
+        f.write('')
+
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        future_to_url = {executor.submit(fetch_comments_with_selenium, url): url for url in urls}
+        for future in as_completed(future_to_url):
+            url = future_to_url[future]
+            try:
+                result = future.result()
+                # Append the result to the JSON file
+                with open('comments.json', 'a') as f:
+                    json.dump(result, f, indent=4)
+                    f.write('\n')
+            except Exception as e:
+                print(f"Error fetching comments for {url}: {e}")
 
 if __name__ == "__main__":
     # Start timing
-    start_time = time.time()
+    overall_start_time = time.time()
     
     # Read URLs from file
     with open('post_urls.txt', 'r') as f:
-        urls = f.readlines()
+        urls = [url.strip() for url in f.readlines()]
     
-    for url in urls:
-        url = url.strip()
-        soup = fetch_comments_with_selenium(url)
-        comments = parse_comments(soup)
-        
-        for comment in comments[:10]:  # Limit to top 10 comments
-            print(comment)
-        
-        # Add delay between requests
-        time.sleep(5)
+    # Fetch comments for all URLs
+    fetch_all_comments(urls)
     
-    # End timing
-    end_time = time.time()
-    elapsed_time = end_time - start_time
-    print(f"Total elapsed time: {elapsed_time:.2f} seconds")
+    # End overall timing
+    overall_end_time = time.time()
+    overall_elapsed_time = overall_end_time - overall_start_time
+    print(f"Total elapsed time: {overall_elapsed_time:.2f} seconds")
