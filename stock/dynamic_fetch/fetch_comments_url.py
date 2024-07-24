@@ -9,7 +9,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, JavascriptException, NoSuchElementException
 
 USER_AGENTS = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -37,13 +37,47 @@ def fetch_comments_with_selenium(url):
     driver = setup_selenium()
     driver.get(url)
     try:
-        # Wait for the comments section to load
+        # Wait for the outer shadow DOM host element
+        outer_shadow_host = WebDriverWait(driver, 20).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'shreddit-comments-sort-dropdown'))
+        )
+        
+        # Access the outer shadow DOM
+        outer_shadow_root = driver.execute_script('return arguments[0].shadowRoot', outer_shadow_host)
+        
+        # Wait for the inner shadow DOM host element
+        inner_shadow_host = WebDriverWait(outer_shadow_root, 20).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'shreddit-sort-dropdown'))
+        )
+        
+        # Access the inner shadow DOM
+        inner_shadow_root = driver.execute_script('return arguments[0].shadowRoot', inner_shadow_host)
+        
+        # Wait for and click the sort dropdown
+        sort_button = WebDriverWait(inner_shadow_root, 20).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'div[slot="selected-item"]'))
+        )
+        driver.execute_script("arguments[0].click();", sort_button)
+        
+        # Wait for and click the "Top" option
+        top_option = WebDriverWait(inner_shadow_root, 20).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'data[value="TOP"]'))
+        )
+        driver.execute_script("arguments[0].click();", top_option)
+
+        # Wait for the comments to load
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, 'shreddit-comment'))
         )
         soup = BeautifulSoup(driver.page_source, 'html.parser')
     except TimeoutException:
         print(f"Timeout occurred while loading comments for URL: {url}")
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+    except JavascriptException as e:
+        print(f"JavaScript exception: {e}")
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+    except NoSuchElementException as e:
+        print(f"No such element: {e}")
         soup = BeautifulSoup(driver.page_source, 'html.parser')
     finally:
         driver.quit()
@@ -55,11 +89,13 @@ def parse_comments(soup):
         if comment_tag.get('depth') == '0':  # Only top-level comments
             comment_details = {
                 'author': comment_tag.get('author'),
-                'score': comment_tag.get('score'),
+                'score': int(comment_tag.get('score').replace(' points', '').replace(' point', '')),
                 'comment_text': comment_tag.find('div', {'slot': 'comment'}).get_text(strip=True),
                 'comment_url': f"https://www.reddit.com{comment_tag.get('permalink')}"
             }
             comments.append(comment_details)
+    # Sort comments by score in descending order
+    comments = sorted(comments, key=lambda x: x['score'], reverse=True)
     return comments
 
 if __name__ == "__main__":
@@ -75,7 +111,7 @@ if __name__ == "__main__":
         soup = fetch_comments_with_selenium(url)
         comments = parse_comments(soup)
         
-        for comment in comments:
+        for comment in comments[:10]:  # Limit to top 10 comments
             print(comment)
         
         # Add delay between requests
