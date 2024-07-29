@@ -32,7 +32,10 @@ comments_collection = db[COMMENTS_COLLECTION_NAME]
 local_tz = pytz.timezone('America/Toronto')
 
 def round_to_nearest_hour(dt):
-    dt = dt.replace(minute=0, second=0, microsecond=0) + timedelta(hours=dt.minute // 30)
+    if dt.minute >= 30:
+        dt = dt.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+    else:
+        dt = dt.replace(minute=0, second=0, microsecond=0)
     return dt
 
 def format_time(dt):
@@ -110,9 +113,9 @@ def main():
     start_time = end_time - timedelta(days=7)  # Start time is inclusive
     start_epoch = int(start_time.timestamp())
     end_epoch = int(end_time.timestamp())
-
+    tickers = ["NVIDIA", "nvida", "SPY", "ASTS", "AMD"]
     # Fetch and store posts
-    all_posts = fetch_and_store_posts(subreddit, start_epoch, end_epoch, "NVDA", use_status=False)
+    all_posts = fetch_and_store_posts(subreddit, start_epoch, end_epoch, tickers, use_status=False)
 
     # Insert or update posts in MongoDB
     for post in all_posts:
