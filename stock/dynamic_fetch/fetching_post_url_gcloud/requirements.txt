@@ -1,0 +1,12 @@
+google-cloud-functions
+praw
+requests
+python-dotenv
+pytz
+flask
+beautifulsoup4
+pymongo
+dnspython
+webdriver-manager
+selenium
+concurrent.futures

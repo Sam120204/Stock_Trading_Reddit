@@ -19,8 +19,12 @@ venv/
 stock/fetch_reddit_post_comment/.env
 stock/fetch_reddit_post_comment/results
 stock/fetch_reddit_post_comment/venv
+
 stock/fetch_reddit_post_comment/__pycache__/
 __pycache__/
 stock/dynamic_fetch/venv
 stock/dynamic_fetch/.env
 stock/dynamic_fetch/data_collection.py
+stock/dynamic_fetch/comments.json
+stock/dynamic_fetch/backend
+stock/dynamic_fetch/fetching_post_url_gcloud/.env
