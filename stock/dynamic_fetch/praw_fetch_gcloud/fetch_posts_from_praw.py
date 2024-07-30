@@ -6,7 +6,6 @@ import requests
 import json
 import requests
 from datetime import datetime, timedelta
-from parse_post_url import fetch_reddit_post, parse_post
 from dotenv import load_dotenv
 
 # Load environment variables from .env file

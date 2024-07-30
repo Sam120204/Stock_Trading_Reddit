@@ -1,0 +1,7 @@
+google-cloud-functions
+praw
+requests
+python-dotenv
+pytz
+pymongo
+dnspython
