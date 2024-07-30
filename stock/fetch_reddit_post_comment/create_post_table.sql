@@ -20,3 +20,6 @@ CREATE TABLE reddit_post_scores (
 );
 
 SET client_encoding = 'UTF8';
+SELECT * FROM reddit_raw_posts LIMIT 20;
+SELECT * FROM  reddit_post_scores;
+SELECT * FROM reddit_raw_posts WHERE post_id = '1dshht2';

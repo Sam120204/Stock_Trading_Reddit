@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import pytz
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
-from fetch_post_url_from_pullpush import fetch_and_store_posts
+from fetch_post_url_from_pullpush import fetch_prev_day_posts, fetch_all_comments_from_url
 from parse_comment_url import fetch_comments_for_post
 
 # Load environment variables from .env file
@@ -78,7 +78,6 @@ def insert_or_update_post(post):
 def insert_or_update_comment(comment):
     comment_id = comment['comment_url'].split('/')[-2]  # Use the comment URL to generate a unique ID
     post_url = comment['post_url']
-    commentor_id = comment['commentor_id']
     comment_scores = comment['comment_scores']
     comment_url = comment['comment_url']
     fetched_time = format_time(round_to_nearest_hour(datetime.now(local_tz)))
@@ -92,13 +91,12 @@ def insert_or_update_comment(comment):
                 'fetched_times': fetched_time,
                 'comment_scores': comment_scores
              },
-             '$set': {'post_url': post_url, 'commentor_id': commentor_id, 'comment_url': comment_url}}
+             '$set': {'post_url': post_url, 'comment_url': comment_url}}
         )
     else:
         new_comment = {
             '_id': comment_id,
             'post_url': post_url,
-            'commentor_id': commentor_id,
             'comment_scores': [comment_scores],
             'comment_url': comment_url,
             'fetched_times': [fetched_time]
@@ -109,19 +107,19 @@ def main():
     # Specify the subreddit and time period
     subreddit = 'wallstreetbets'
 
-    end_time = datetime.now(local_tz)  # End time is exclusive
-    start_time = end_time - timedelta(days=7)  # Start time is inclusive
+    end_time = round_to_nearest_hour(datetime.now(local_tz))  # End time is exclusive
+    start_time = end_time - timedelta(days=2)  # Start time is inclusive
     start_epoch = int(start_time.timestamp())
     end_epoch = int(end_time.timestamp())
     tickers = ["NVIDIA", "nvida", "SPY", "ASTS", "AMD"]
     # Fetch and store posts
-    all_posts = fetch_and_store_posts(subreddit, start_epoch, end_epoch, tickers, use_status=False)
+    all_posts = fetch_prev_day_posts(subreddit, start_epoch, end_epoch)
 
     # Insert or update posts in MongoDB
     for post in all_posts:
         insert_or_update_post(post)
         # Fetch and store comments for each post
-        comments = fetch_comments_for_post(post['url'])
+        comments = fetch_all_comments_from_url([post['url']], post['score'])
         for comment in comments:
             insert_or_update_comment(comment)
 
