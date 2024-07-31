@@ -2,6 +2,7 @@ import os
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 import pytz
+import time
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
 from fetch_posts_from_praw import fetch_prev_day_posts, fetch_all_comments_from_url
@@ -47,6 +48,7 @@ def insert_or_update_post(post):
     number_of_scores = post['score']
     number_of_comments = post['num_comments']
     url = post['url']
+    tickers = post.get('tickers', [])
     fetched_time = format_time(round_to_nearest_hour(datetime.now(local_tz)))
 
     existing_post = posts_collection.find_one({'_id': post_id})
@@ -59,8 +61,8 @@ def insert_or_update_post(post):
                 'fetched_times': fetched_time,
                 'number_of_scores': number_of_scores,
                 'number_of_comments': number_of_comments
-             },
-             '$set': {'url': url, 'title': title}}
+            },
+            '$set': {'url': url, 'title': title, 'tickers': tickers}}
         )
     else:
         new_post = {
@@ -70,6 +72,7 @@ def insert_or_update_post(post):
             'number_of_comments': [number_of_comments],
             # 'sentiment_scores': [sentiment_score],
             'url': url,
+            'tickers': tickers,
             'fetched_times': [fetched_time]
         }
         posts_collection.insert_one(new_post)
@@ -103,11 +106,13 @@ def insert_or_update_comment(comment):
         comments_collection.insert_one(new_comment)
         
 def main():
+    # Start timing
+    start_timing  = time.time()
     # Specify the subreddit and time period
     subreddit = 'wallstreetbets'
 
     end_time = round_to_nearest_hour(datetime.now(local_tz))  # End time is exclusive
-    start_time = end_time - timedelta(days=2)  # Start time is inclusive
+    start_time = end_time - timedelta(days=4)  # Start time is inclusive
     start_epoch = int(start_time.timestamp())
     end_epoch = int(end_time.timestamp())
     # Fetch and store posts
@@ -120,6 +125,13 @@ def main():
         comments = fetch_all_comments_from_url([post['url']], post['score'])
         for comment in comments:
             insert_or_update_comment(comment)
+    
+    # End timing
+    end_timing = time.time()
+    elapsed_time = end_timing - start_timing
+    print(f"Total elapsed time: {elapsed_time:.2f} seconds")
+
+
 
 if __name__ == "__main__":
     main()

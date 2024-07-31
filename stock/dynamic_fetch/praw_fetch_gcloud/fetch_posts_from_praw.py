@@ -7,7 +7,7 @@ import json
 import requests
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
-
+from fetch_tickers_from_post import extract_and_filter_tickers
 # Load environment variables from .env file
 load_dotenv()
 
@@ -32,13 +32,20 @@ def fetch_prev_day_posts(subreddit_name, start_epoch, end_epoch):
             if url in fetched_urls:
                 continue
             fetched_urls.add(url)
-           
+
+            tickers = extract_and_filter_tickers({
+                'title': submission.title,
+                'body': submission.selftext
+            })
+
             post_data = {
                 'id': submission.id,
                 'title': submission.title,
+                'body': submission.selftext,
                 'url': f"https://www.reddit.com{submission.permalink}",
                 'score': submission.score,
                 'num_comments': submission.num_comments,
+                'tickers': tickers
             }
 
             all_posts.append(post_data)
@@ -76,16 +83,24 @@ def fetch_all_comments_from_url(urls, post_upvote):
     return all_comments_by_post
 
 if __name__ == "__main__":
-    with open('post_urls.txt', 'r') as f:
-        urls = [url.strip() for url in f.readlines()]
-
+    # Start timing
+    start_timing  = time.time()
+    
     # Set the timezone for Waterloo, Canada
     local_tz = pytz.timezone('America/Toronto')
     # Specify the subreddit and time period
     subreddit = 'wallstreetbets'
-
+    
     end_time = datetime.now(local_tz)  # End time is exclusive
-    start_time = end_time - timedelta(days=1)  # Start time is inclusive
+    start_time = end_time - timedelta(days=5)  # Start time is inclusive
     start_epoch = int(start_time.timestamp())
     end_epoch = int(end_time.timestamp())
+    posts = fetch_prev_day_posts(subreddit, start_epoch, end_epoch)
+    for post in posts:
+        print(post)
+        
+    # End timing
+    end_timing = time.time()
+    elapsed_time = end_timing - start_timing
+    print(f"Total elapsed time: {elapsed_time:.2f} seconds")
 
