@@ -67,23 +67,32 @@ def chunk_text(title, body, comments, score, num_comments, max_tokens=8192):
     chunked_texts = []
     current_chunk = combined_text
 
-    for comment in comments:
-        if abs(comment['score']) > (score + 2 * num_comments) * 0.075:
-            comment_text = f"Comment: {comment['body']} (Score: {comment['score']})\n"
-            if len(current_chunk) + len(comment_text) > max_tokens:
-                chunked_texts.append(current_chunk)
-                current_chunk = combined_text + comment_text
-            else:
-                current_chunk += comment_text
-            for reply in comment.get('replies', []):
-                if abs(reply['score']) > (score + 2 * num_comments) * 0.15:
-                    reply_text = f"Reply: {reply['body']} (Score: {reply['score']})\n"
-                    if len(current_chunk) + len(reply_text) > max_tokens:
-                        chunked_texts.append(current_chunk)
-                        current_chunk = combined_text + reply_text
-                    else:
-                        current_chunk += reply_text
+    # Filter and sort comments based on the absolute value of their scores
+    filtered_comments = [
+        comment for comment in comments
+        if abs(comment['score']) > (abs(score) + 2 * num_comments) * 0.05
+    ]
+    sorted_comments = sorted(filtered_comments, key=lambda c: abs(c['score']), reverse=True)
 
+    # Process only the top 10 comments with the highest scores
+    for comment in sorted_comments[:10]:
+        comment_text = f"Comment: {comment['body']} (Score: {comment['score']})\n"
+        if len(current_chunk) + len(comment_text) > max_tokens:
+            chunked_texts.append(current_chunk)
+            current_chunk = combined_text + comment_text
+        else:
+            current_chunk += comment_text
+        # Check replies in the comment if they exist and meet the criteria
+        for reply in comment.get('replies', []):
+            if abs(reply['score']) > (abs(comment['score']) + 2 * len(comment.get('replies', []))) * 0.15:
+                reply_text = f"Reply: {reply['body']} (Score: {reply['score']})\n"
+                if len(current_chunk) + len(reply_text) > max_tokens:
+                    chunked_texts.append(current_chunk)
+                    current_chunk = combined_text + reply_text
+                else:
+                    current_chunk += reply_text
+
+    # Append the last chunk if it's not empty
     if current_chunk != combined_text:
         chunked_texts.append(current_chunk)
     return chunked_texts
