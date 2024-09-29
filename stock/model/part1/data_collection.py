@@ -127,8 +127,21 @@ def fetch_posts_and_comments_parallel(reddit, urls):
 
         for future in as_completed(futures):
             post_data = future.result()
-            if len(post_data['comments']) + post_data['score'] >= 25:  # adjust this if necessary
+            if 2*len(post_data['comments']) + abs(post_data['score']) >= 30:  # adjust this if necessary
                 results.append(post_data)
+
+    return results
+
+
+def fetch_posts_and_comments_raw(reddit, urls):
+    results = []
+
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        futures = [executor.submit(fetch_post_info_on_url, reddit, url) for url in urls]
+
+        for future in as_completed(futures):
+            post_data = future.result()
+            results.append(post_data)
 
     return results
 
@@ -151,6 +164,12 @@ def get_reddit_data(limit=100):
 def get_reddit_data_from_urls(urls):
     reddit_api = setup_reddit_api()
     data = fetch_posts_and_comments_parallel(reddit_api, urls)
+    return data
+
+
+def get_raw_reddit_data_from_urls(urls):
+    reddit_api = setup_reddit_api()
+    data = fetch_posts_and_comments_raw(reddit_api, urls)
     return data
 
 

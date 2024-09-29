@@ -32,15 +32,24 @@ def analyze_sentiment(text, ticker):
                     #            f"A score of 0 means that the sentiment is neutral, indicating that the general view is neither positive nor negative. "
                     #            f"A score of 1 means that the sentiment is very positive, indicating that the general view is optimistic or bullish.\n\n"
                     #            f"{text}"
+                    # "content":
+                    #     f"Analyze the overall sentiment of the following Reddit post and its comments regarding the specific ticker {ticker}. "
+                    #     f"Consider the title, body, comments, and especially their scores (upvotes-downvotes by viewers) as indicators of the sentiment. "
+                    #     f"Focus on the general sentiment about the specific ticker or company {ticker} in the post considering whole posts and comments with scores, rather than individual agreement or disagreement with specific comments. "
+                    #     f"You should just tell me a sentiment score between -1 and 1 without any further explanation. "
+                    #     f"A score of -1 means that the sentiment towards the stock ticker or company {ticker} is very negative, indicating that the general view towards ticker {ticker} is pessimistic or bearish. "
+                    #     f"A score of 0 means that the sentiment is neutral, indicating that the general view towards ticker {ticker} is neither positive nor negative."
+                    #     f"A score of 1 means that the sentiment is very positive, indicating that the general view towards ticker {ticker} is optimistic or bullish.\n\n"
+                    #     f"{text}"
                     "content":
-                        f"Analyze the overall sentiment of the following Reddit post and its comments regarding the specific ticker {ticker}. "
-                        f"Consider the title, body, comments, and especially their scores (upvotes-downvotes by viewers) as indicators of the sentiment. "
-                        f"Focus on the general sentiment about the stock ticker or company discussed in the post considering whole posts and comments with scores, rather than individual agreement or disagreement with specific comments. "
-                        f"You should just tell me a sentiment score between -1 and 1 without any further explanation. "
-                        f"A score of -1 means that the sentiment towards the stock ticker or company is very negative, indicating that the general view is pessimistic or bearish. "
-                        f"A score of 0 means that the sentiment is neutral, indicating that the general view is neither positive nor negative. "
-                        f"A score of 1 means that the sentiment is very positive, indicating that the general view is optimistic or bullish.\n\n"
-                        f"{text}"
+    f"Analyze the overall sentiment of the following Reddit post and its comments regarding the likelihood of price growth for the specific ticker {ticker}. "
+    f"Consider the title, body, comments, and especially their scores (upvotes-downvotes by viewers) as indicators of the sentiment. "
+    f"Focus on the general sentiment about the potential price growth of ticker {ticker} in the post, considering all posts and comments with scores, rather than individual agreement or disagreement with specific comments. "
+    f"You should just tell me a sentiment score between -1 and 1 without any further explanation. "
+    f"A score of -1 means that the sentiment is very negative, indicating a general expectation that the price of ticker {ticker} will fall. "
+    f"A score of 0 means that the sentiment is neutral, indicating that either the ticker {ticker} is not generally discussed or the expectations about the price movement of ticker {ticker} are neither strongly positive nor negative. "
+    f"A score of 1 means that the sentiment is very positive, indicating a general expectation that the price of ticker {ticker} will grow.\n\n"
+    f"{text}"
 
 
                 }
@@ -55,7 +64,7 @@ def analyze_sentiment(text, ticker):
             if content:
                 sentiment += content
                 print(content, end="")  # Print the chunk as it arrives
-
+        print(sentiment.strip())
         return sentiment.strip()
     except Exception as e:
         print(f"Error analyzing sentiment: {str(e)}")
@@ -70,12 +79,12 @@ def chunk_text(title, body, comments, score, num_comments, max_tokens=8192):
     # Filter and sort comments based on the absolute value of their scores
     filtered_comments = [
         comment for comment in comments
-        if abs(comment['score']) > (abs(score) + 2 * num_comments) * 0.05
+        # if (abs(comment['score']) + 2 * len(comment.get('replies', []))) > (abs(score) + 2 * num_comments) * 0.05
     ]
-    sorted_comments = sorted(filtered_comments, key=lambda c: abs(c['score']), reverse=True)
+    sorted_comments = sorted(filtered_comments, key=lambda c: (abs(c['score']) + 2 * len(c.get('replies', []))), reverse=True)
 
     # Process only the top 10 comments with the highest scores
-    for comment in sorted_comments[:10]:
+    for comment in sorted_comments[:5]:
         comment_text = f"Comment: {comment['body']} (Score: {comment['score']})\n"
         if len(current_chunk) + len(comment_text) > max_tokens:
             chunked_texts.append(current_chunk)
@@ -84,7 +93,7 @@ def chunk_text(title, body, comments, score, num_comments, max_tokens=8192):
             current_chunk += comment_text
         # Check replies in the comment if they exist and meet the criteria
         for reply in comment.get('replies', []):
-            if abs(reply['score']) > (abs(comment['score']) + 2 * len(comment.get('replies', []))) * 0.15:
+            if (abs(reply['score']) + len(reply.get('replies', []))) > (abs(comment['score']) + 2 * len(comment.get('replies', []))) * 0.20:
                 reply_text = f"Reply: {reply['body']} (Score: {reply['score']})\n"
                 if len(current_chunk) + len(reply_text) > max_tokens:
                     chunked_texts.append(current_chunk)
@@ -106,7 +115,7 @@ def analyze_post_sentiment(post, ticker):
     num_comments = len(comments)
 
     chunked_texts = chunk_text(title, body, comments, score, num_comments)
-    print(chunked_texts)
+    # print(chunked_texts)
 
     sentiment_scores = []
     for chunk in chunked_texts:

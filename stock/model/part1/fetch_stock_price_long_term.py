@@ -10,7 +10,7 @@ def fetch_stock_price_long_term(tickers, period="5y"):
     return all_data
 
 if __name__ == "__main__":
-    tickers = ["AAPL"]
+    tickers = ["GME"]
     data = fetch_stock_price_long_term(tickers)
     for ticker, df in data.items():
         print(f"\n{ticker} data:")

@@ -7,7 +7,7 @@ from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 
 # Load the stock data (5 years)
-stock_data = pd.read_csv('data/AAPL_long_term.csv', parse_dates=True, index_col='Date')
+stock_data = pd.read_csv('data/GME_long_term.csv', parse_dates=True, index_col='Date')
 
 # Feature selection: Stock features
 stock_features = ['Close', 'Volume']
@@ -76,22 +76,68 @@ actual_prices = scaler_stock.inverse_transform(np.concatenate([y_test_stock.resh
 # Evaluating the model
 rmse = np.sqrt(mean_squared_error(actual_prices, predicted_prices))
 print(f"Root Mean Squared Error: {rmse}")
+#
+# # Plotting the training loss
+# plt.figure(figsize=(10, 5))
+# plt.plot(history.history['loss'], label='Training Loss')
+# plt.plot(history.history['val_loss'], label='Validation Loss')
+# plt.title('Training and Validation Loss')
+# plt.xlabel('Epochs')
+# plt.ylabel('Loss')
+# plt.legend()
+# plt.show()
+#
+# # Plotting the actual vs. predicted prices
+# plt.figure(figsize=(14, 5))
+# plt.plot(actual_prices, color='blue', label='Actual Prices')
+# plt.plot(predicted_prices, color='red', label='Predicted Prices')
+# plt.title('Stock Price Prediction (Without Reddit Data)')
+# plt.xlabel('Time')
+# plt.ylabel('Stock Price')
+# plt.legend()
+# plt.show()
 
-# Plotting the training loss
-plt.figure(figsize=(10, 5))
-plt.plot(history.history['loss'], label='Training Loss')
-plt.plot(history.history['val_loss'], label='Validation Loss')
-plt.title('Training and Validation Loss')
-plt.xlabel('Epochs')
-plt.ylabel('Loss')
-plt.legend()
-plt.show()
+def predict_future(model, last_sequence, n_future_predictions, scaler, future_steps=1):
+    future_predictions = []
+    current_sequence = last_sequence
 
-# Plotting the actual vs. predicted prices
+    for _ in range(n_future_predictions):
+        # Predict the next step
+        next_pred = model.predict(current_sequence.reshape(1, time_steps, current_sequence.shape[1]))
+
+        # Inverse transform the prediction to get the actual stock price
+        next_pred_rescaled = scaler.inverse_transform(np.concatenate([next_pred, np.zeros((1, 1))], axis=1))[:, 0]
+
+        # Append the predicted value to the future predictions
+        future_predictions.append(next_pred_rescaled[0])
+
+        # Add the predicted value back into the current sequence (shifting the window)
+        next_pred_scaled = scaler.transform(
+            np.concatenate([next_pred_rescaled.reshape(-1, 1), np.zeros((1, 1))], axis=1))[:, 0]
+        current_sequence = np.concatenate([current_sequence[1:], [[next_pred_scaled[0], 0]]],
+                                          axis=0)  # Shift and append the new prediction
+
+    return future_predictions
+
+
+# Get the last sequence from the test data
+last_sequence = X_test_stock[-1]
+
+# Number of future days to predict
+n_future_predictions = 30  # Predict for the next 30 days
+
+# Predict future prices
+future_prices = predict_future(model, last_sequence, n_future_predictions, scaler_stock)
+
+# Create an extended range for the future predictions plot
+extended_actual_prices = np.concatenate([actual_prices, [None] * n_future_predictions])
+extended_predicted_prices = np.concatenate([predicted_prices, future_prices])
+
+# Plotting the actual vs. predicted prices along with future predictions
 plt.figure(figsize=(14, 5))
-plt.plot(actual_prices, color='blue', label='Actual Prices')
-plt.plot(predicted_prices, color='red', label='Predicted Prices')
-plt.title('Stock Price Prediction (Without Reddit Data)')
+plt.plot(extended_actual_prices, color='blue', label='Actual Prices')
+plt.plot(extended_predicted_prices, color='red', label='Predicted Prices (With Future Predictions)')
+plt.title(f'Stock Price Prediction (Including {n_future_predictions} Days of Future Predictions)')
 plt.xlabel('Time')
 plt.ylabel('Stock Price')
 plt.legend()

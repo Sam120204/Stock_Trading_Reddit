@@ -30,3 +30,4 @@ stock/dynamic_fetch/backend
 stock/dynamic_fetch/fetching_post_url_gcloud/.env
 
 stock/model/part1/.env
+/stock/dynamic_fetch/trendsage_admin_new.pem

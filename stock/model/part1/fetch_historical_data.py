@@ -56,19 +56,21 @@ def fetch_and_store_posts(subreddit, start_epoch, end_epoch, ticker):
                 "size": 100
             }
             response = requests.get(PULLPUSH_URL, params=params)
+            print(response.json())
             posts = response.json().get('data', [])
             if not posts:
                 print("end of posts")
                 break
 
             for post in posts:
-                print(post['id'], subreddit, ticker, post['title'], post['selftext'], f"https://www.reddit.com{post['permalink']}", datetime.fromtimestamp(post['created_utc']))
 
                 # Check if post already exists in the database
-                cur.execute("SELECT EXISTS(SELECT 1 FROM reddit_raw_posts WHERE post_id = %s)", (post['id'],))
+                cur.execute("SELECT EXISTS(SELECT 1 FROM reddit_raw_posts WHERE post_id = %s AND ticker = %s)", (post['id'], ticker))
                 exists = cur.fetchone()[0]
 
                 if not exists:
+                    print(post['id'], subreddit, ticker, post['title'], post['selftext'],
+                          f"https://www.reddit.com{post['permalink']}", datetime.fromtimestamp(post['created_utc']))
                     # Insert post into database if it does not exist
                     cur.execute("""
                         INSERT INTO reddit_raw_posts (post_id, subreddit, ticker, title, url, post_time)
@@ -91,8 +93,8 @@ def fetch_and_store_posts(subreddit, start_epoch, end_epoch, ticker):
 
 # Specify the subreddit and time period
 subreddit = 'wallstreetbets'
-start_time = datetime(2024, 8, 14)  # Start time is inclusive
-end_time = datetime(2024, 8, 21)  # End time is exclusive
+start_time = datetime(2024, 8, 25)  # Start time is inclusive
+end_time = datetime(2024, 9, 29)  # End time is exclusive
 start_epoch = int(start_time.timestamp())
 end_epoch = int(end_time.timestamp())
 
@@ -124,7 +126,7 @@ while current_time < end_time:
     end_epoch = int((current_time + timedelta(days=1)).timestamp())
 
     # Call the fetch and store function
-    fetch_and_store_posts(subreddit, start_epoch, end_epoch, "AAPL")
+    fetch_and_store_posts(subreddit, start_epoch, end_epoch, "INTC")
 
     # Move to the next day
     current_time += timedelta(days=1)
