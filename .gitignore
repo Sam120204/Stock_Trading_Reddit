@@ -33,3 +33,4 @@ stock/model/part1/.env
 /stock/dynamic_fetch/trendsage_admin_new.pem
 stock/model/part2/24hrs_changes/.env
 stock/model/part2/24hrs_changes/gcloud/.env
+stock/SEC/insiderTrading.py
